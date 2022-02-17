@@ -1,1 +1,1 @@
-me quieor morir
+me quiero morir x2
