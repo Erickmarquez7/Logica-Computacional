@@ -1,0 +1,7 @@
+Integrantes:
+Bernal Márquez Erick        317042522
+Deloya Andrade Ana Valeria  317277582
+Perez    Natalia            ?
+
+Desarrollo:
+Primera practica
