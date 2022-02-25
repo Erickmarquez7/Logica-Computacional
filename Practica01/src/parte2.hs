@@ -58,6 +58,9 @@ esBuena = error  "Falta implentar"
         | elem x ady = False
         | otherwise = verifica ady xs
     -}
+creaTodasLasTuplas :: [Color] -> [Balcanes] -> [(Color,Balcanes)]
+--creaTodasLasTuplas = 
+creaTodasLasTuplas = error "No implementación :c"
 
 -- Calcula todas las coloraciones buenas y completas respecto a la matriz de adyacencias recibida
 coloraciones :: Ady -> [Coloracion]
