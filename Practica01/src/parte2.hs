@@ -8,6 +8,8 @@
 - Deloya Andrade Ana Valeria  317277582
 - Perez Romero Natalia Abigail 318144265
 -}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Move guards forward" #-}
 
 data Color = Rojo | Amarillo | Verde | Azul deriving (Show,Eq)
 
@@ -17,7 +19,7 @@ data Balcanes = Albania
                 | BosniaYHerzegovina
                 | Kosovo
                 | Macedonia
-                | Montenegro deriving (Show, Eq)
+                | Montenegro deriving (Show, Eq, Ord)
 
 -- Dos países son adyacentes cuando comparten frontera
 type Ady = [(Balcanes,Balcanes)]
@@ -31,40 +33,69 @@ adyacencias = [(Albania, Montenegro),(Albania ,Kosovo),(Albania,Macedonia),(Bulg
 -- Coloración. Esta relaciona a un color, con un país, es una lista de tuplas
 type Coloracion = [(Color,Balcanes)]
 
--- nosotros debemos probar estas xd
-colores :: Coloracion
-colores = [(Rojo, Montenegro),(Azul, Albania),(Verde,Bulgaria),(Amarillo,BosniaYHerzegovina),
-            (Rojo,Kosovo),(Verde, Macedonia)]
-
--- Regresa si la coloración recibida es buena respecto a la matriz de adyacencias
--- Ejemplo de una buena coloracion: [(Montenegro,Bulgaria)]
--- Ejemplo de una mala coloracion: [(Macedonia,Bulgaria)]
 
 esBuena :: Ady -> Coloracion -> Bool 
-esBuena = error  "Falta implentar"
-{-esBuena ady colores =
+esBuena ady col =
     let 
-        col = [[snd x | x <- colores, fst x == Rojo],
-               [snd x | x <- colores, fst x == Amarillo],
-               [snd x | x <- colores, fst x == Verde],
-               [snd x | x <- colores, fst x == Azul]] 
+        colores = [[snd x | x <- col, fst x == Rojo],
+               [snd x | x <- col, fst x == Amarillo],
+               [snd x | x <- col, fst x == Verde],
+               [snd x | x <- col, fst x == Azul]] 
                
     in 
-        filter ((> 1) . length) col
-               
-    verifica :: Ady -> [(Balcanes, Balcanes)] -> Bool
-    verifica ady [] = True
-    verifica ady (x:xs)
-        | elem x ady = False
-        | otherwise = verifica ady xs
-    -}
-creaTodasLasTuplas :: [Color] -> [Balcanes] -> [(Color,Balcanes)]
---creaTodasLasTuplas = 
-creaTodasLasTuplas = error "No implementación :c"
+        verifica ady (creaTodasLasTuplas $ filter ((> 1) . length) colores)
+  
+
+--creaTodasLasTuplas :: [Color] -> [Balcanes] -> [(Color,Balcanes)]
+creaTodasLasTuplas [] = []
+creaTodasLasTuplas (z: zs) = [(x,y)|x <- z, y <- z] ++ creaTodasLasTuplas zs
+
+verifica :: Ady -> [(Balcanes, Balcanes)] -> Bool
+verifica ady [] = True
+verifica ady (x:xs)
+    | elem x ady = False
+    | otherwise = verifica ady xs
+
+colores = [Rojo,Amarillo,Verde,Azul]
+balcanes = [Albania,Bulgaria,BosniaYHerzegovina,Kosovo,Macedonia,Montenegro]
 
 -- Calcula todas las coloraciones buenas y completas respecto a la matriz de adyacencias recibida
 coloraciones :: Ady -> [Coloracion]
-coloraciones = error  "Falta implentar"
+coloraciones ad = filter (esBuena ad) colorcitos
+    where 
+        colorcitos = [ [(c1,b1)] ++ [(c2,b2)] ++ [(c3,b3)] ++ [(c4,b4)] ++ [(c5,b5)] ++ [(c6,b6)]
+                  | c1 <- colores,
+                    c2 <- colores,
+                    c3 <- colores,
+                    c4 <- colores,
+                    c5 <- colores,
+                    c6 <- colores,
+                    b1 <- balcanes,
+                    b2 <- balcanes,
+                    b3 <- balcanes,
+                    b4 <- balcanes,
+                    b5 <- balcanes,
+                    b6 <- balcanes,
+                    b1 /= b2, b1 /= b3, b1 /= b4, b1 /= b5, b1 /= b6,
+                    b2 /= b3, b2 /= b4, b2 /= b5, b2 /= b3,
+                    b3 /= b4, b3 /= b5, b3 /= b6,
+                    b4 /= b5, b4 /= b6, 
+                    b5 /= b6,
+                    b1 < b2, b1 < b3, b1 < b4, b1 < b5, b1 < b6,
+                    b2 < b3, b2 < b4, b2 < b5, b2 < b3,
+                    b3 < b4, b3 < b5, b3 < b6,
+                    b4 < b5, b4 < b6, 
+                    b5 < b6
+                    ]
+                    
+
+colBuena = [(Rojo, Albania), (Rojo, Bulgaria), (Rojo, BosniaYHerzegovina), (Azul, Kosovo),
+            (Amarillo, Macedonia), (Amarillo, Montenegro)]
+
+colMala = [(Verde,Albania), (Verde,Bulgaria), (Verde,BosniaYHerzegovina), 
+            (Azul,Kosovo), (Amarillo,Macedonia), (Verde,Montenegro)]
+
+
 -- 
 {-coloraciones ady colores =  - }
 -- En este metodo, se tiene que usar el resultado obtenido en el anterior

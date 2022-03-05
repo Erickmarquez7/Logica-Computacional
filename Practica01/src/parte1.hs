@@ -97,7 +97,7 @@ producto (Uno x) U = Uno x -- zzz1  1
 producto (Cero x) U = Cero x
 
 producto (Cero x) (Uno y) = suma (Cero x) (Cero (producto (Cero x) y))  -- zzz0  zzz1   
-producto (Uno x) (Cero y) = suma (Cero y)  (Cero (producto (Cero x) y)) -- zzz1  zzz0
+producto (Uno x) (Cero y) = suma (Cero y)  (Cero (producto (Cero y) x)) -- zzz1  zzz0
 
 producto (Cero x) (Cero y) = suma (Cero x) (Cero y) -- zzz0 zzz0
 producto (Uno x) (Uno y) = suma (Uno x) (Cero (Uno y)) -- zzz1 zzz1
