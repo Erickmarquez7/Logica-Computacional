@@ -34,21 +34,23 @@ adyacencias = [(Albania, Montenegro),(Albania ,Kosovo),(Albania,Macedonia),(Bulg
 type Coloracion = [(Color,Balcanes)]
 
 
-esBuena :: Ady -> Coloracion -> Bool 
+esBuena :: Ady -> Coloracion -> Bool
 esBuena ady col =
-    let 
+    let
         colores = [[snd x | x <- col, fst x == Rojo],
                [snd x | x <- col, fst x == Amarillo],
                [snd x | x <- col, fst x == Verde],
-               [snd x | x <- col, fst x == Azul]] 
-               
-    in 
+               [snd x | x <- col, fst x == Azul]]
+
+    in
         verifica ady (creaTodasLasTuplas $ filter ((> 1) . length) colores)
-  
+
 
 --creaTodasLasTuplas :: [Color] -> [Balcanes] -> [(Color,Balcanes)]
+creaTodasLasTuplas :: [[b]] -> [(b, b)]
 creaTodasLasTuplas [] = []
 creaTodasLasTuplas (z: zs) = [(x,y)|x <- z, y <- z] ++ creaTodasLasTuplas zs
+
 
 verifica :: Ady -> [(Balcanes, Balcanes)] -> Bool
 verifica ady [] = True
@@ -62,37 +64,59 @@ balcanes = [Albania,Bulgaria,BosniaYHerzegovina,Kosovo,Macedonia,Montenegro]
 -- Calcula todas las coloraciones buenas y completas respecto a la matriz de adyacencias recibida
 coloraciones :: Ady -> [Coloracion]
 coloraciones ad = filter (esBuena ad) colorcitos
-    where 
-        colorcitos = [ [(c1,b1)] ++ [(c2,b2)] ++ [(c3,b3)] ++ [(c4,b4)] ++ [(c5,b5)] ++ [(c6,b6)]
-                  | c1 <- colores,
-                    c2 <- colores,
-                    c3 <- colores,
-                    c4 <- colores,
-                    c5 <- colores,
-                    c6 <- colores,
-                    b1 <- balcanes,
-                    b2 <- balcanes,
-                    b3 <- balcanes,
-                    b4 <- balcanes,
-                    b5 <- balcanes,
-                    b6 <- balcanes,
-                    b1 /= b2, b1 /= b3, b1 /= b4, b1 /= b5, b1 /= b6,
-                    b2 /= b3, b2 /= b4, b2 /= b5, b2 /= b3,
-                    b3 /= b4, b3 /= b5, b3 /= b6,
-                    b4 /= b5, b4 /= b6, 
-                    b5 /= b6,
-                    b1 < b2, b1 < b3, b1 < b4, b1 < b5, b1 < b6,
-                    b2 < b3, b2 < b4, b2 < b5, b2 < b3,
-                    b3 < b4, b3 < b5, b3 < b6,
-                    b4 < b5, b4 < b6, 
-                    b5 < b6
-                    ]
-                    
+    where
+        colorcitos = [[(c1, b1)]
+           ++
+             [(c2, b2)]
+               ++ [(c3, b3)] ++ [(c4, b4)] ++ [(c5, b5)] ++ [(c6, b6)] |
+           c1 <- colores,
+           c2 <- colores,
+           c3 <- colores,
+           c4 <- colores,
+           c5 <- colores,
+           c6 <- colores,
+           b1 <- balcanes,
+           b2 <- balcanes,
+           b1 /= b2,
+           b3 <- balcanes,
+           b1 /= b3,
+           b4 <- balcanes,
+           b1 /= b4,
+           b5 <- balcanes,
+           b1 /= b5,
+           b6 <- balcanes,
+           b1 /= b6,
+           b2 /= b3,
+           b2 /= b4,
+           b2 /= b5,
+           b2 /= b3,
+           b3 /= b4,
+           b3 /= b5,
+           b3 /= b6,
+           b4 /= b5,
+           b4 /= b6,
+           b5 /= b6,
+           b1 < b2,
+           b1 < b3,
+           b1 < b4,
+           b1 < b5,
+           b1 < b6,
+           b2 < b3,
+           b2 < b4,
+           b2 < b5,
+           b2 < b3,
+           b3 < b4,
+           b3 < b5,
+           b3 < b6,
+           b4 < b5,
+           b4 < b6,
+           b5 < b6]
+
 
 colBuena = [(Rojo, Albania), (Rojo, Bulgaria), (Rojo, BosniaYHerzegovina), (Azul, Kosovo),
             (Amarillo, Macedonia), (Amarillo, Montenegro)]
 
-colMala = [(Verde,Albania), (Verde,Bulgaria), (Verde,BosniaYHerzegovina), 
+colMala = [(Verde,Albania), (Verde,Bulgaria), (Verde,BosniaYHerzegovina),
             (Azul,Kosovo), (Amarillo,Macedonia), (Verde,Montenegro)]
 
 

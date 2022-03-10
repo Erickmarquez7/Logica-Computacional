@@ -96,11 +96,11 @@ producto U (Uno x) = Uno x  -- zzz1 1
 producto (Uno x) U = Uno x -- zzz1  1
 producto (Cero x) U = Cero x
 
-producto (Cero x) (Uno y) = suma (Cero x) (Cero (producto (Cero x) y))  -- zzz0  zzz1   
-producto (Uno x) (Cero y) = suma (Cero y)  (Cero (producto (Cero y) x)) -- zzz1  zzz0
+producto (Cero x) (Uno y) = suma (Cero x) (producto (Cero x) y)  -- zzz0  zzz1   
+producto (Uno x) (Cero y) = suma (Cero y)  (producto (Cero y) x) -- zzz1  zzz0
 
-producto (Cero x) (Cero y) = suma (Cero x) (Cero y) -- zzz0 zzz0
-producto (Uno x) (Uno y) = suma (Uno x) (Cero (Uno y)) -- zzz1 zzz1
+producto (Cero x) (Cero y) = suma (Cero x) (producto (Cero y) y) -- zzz0 zzz0
+producto (Uno x) (Uno y) = suma (Uno x) (producto (Uno x) y) -- zzz1 zzz1
 
 
 
@@ -134,3 +134,38 @@ nueve = Uno (Cero (Cero U)) -- 1001
 diez = Cero (Uno (Cero U)) -- 1010
 
 cientoVeinticuatro = Cero(Cero (Uno (Uno (Uno (Uno U))))) -- 1111100
+
+
+
+--Pruebas
+
+
+--suma :: BinPos -> BinPos -> BinPos
+catorce = suma siete siete
+quince = suma seis nueve
+trece = suma siete seis
+
+--sucesor :: BinPos -> BinPos
+dieciseis = sucesor quince
+diecisiete = sucesor dieciseis
+
+-- resta :: BinPos -> BinPos -> BinPos
+
+once = resta dieciseis cinco
+doce = resta quince tres --Funciona
+
+-- producto :: BinPos -> BinPos -> BinPos
+
+dieciocho = producto nueve dos
+veinte = producto cuatro cinco
+
+-- binPosToInt :: BinPos -> Int
+enteroDiez = binPosToInt diez
+enteroOnce = binPosToInt diecisiete
+enteroDoce = binPosToInt doce
+
+-- intToBinPos :: Int -> BinPos
+
+diecinueve = intToBinPos 19
+veintiuno = intToBinPos 21
+veintidos = intToBinPos 22
