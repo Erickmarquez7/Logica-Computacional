@@ -22,7 +22,7 @@ data Prop =
   | Conj Prop Prop
   | Disy Prop Prop
   | Impl Prop Prop
-  | Syss Prop Prop
+  | Syss Prop Prop deriving Show
 
 -- Variables.
 type Name = String
@@ -43,14 +43,14 @@ type Renglon = (Estados, Bool)
 -- Una tabla es solo una lista de renglones.
 type Tabla = [Renglon]
 
--- Instancia para Show
+{-- Instancia para Show
 instance Show Prop where
   show (Var x)    = show x
   show (Neg x)    = "¬"++ (show x)
   show (Conj x y) = "(" ++ show x ++ " Λ " ++ show y ++ ")"
   show (Disy x y) = "(" ++ show x ++ " ∨ " ++ show y ++ ")"
   show (Impl x y) = "(" ++ show x ++ " → " ++ show y ++ ")"
-  show (Syss x y) = "(" ++ show x ++ " ↔ " ++ show y ++ ")"
+  show (Syss x y) = "(" ++ show x ++ " ↔ " ++ show y ++ ")"}-}
 
 -- Instancia para Eq
 instance Eq Prop where
@@ -68,12 +68,23 @@ instance Eq Prop where
 
 -- | Funcion que saca todos los átomos de una proposicion.
 varList :: Prop -> [Name]
-varList = error "D:"
+varList (Var p) = [p] 
+varList (Neg p) = varList p
+varList (Conj p q) = (varList p) ++ (varList q)
+varList (Disy p q) = (varList p) ++ (varList q)
+varList (Impl p q) = (varList p) ++ (varList q)
+varList (Syss p q) = (varList p) ++ (varList q) 
 
 -- | Funcion que elimina las implicaciones y dobles implicaciones de
 -- una proposicion.
 equivalencia :: Prop -> Prop
-equivalencia = error "D:"
+equivalencia (Var p) = Var p
+equivalencia (Neg p) = Neg (equivalencia p)
+equivalencia (Conj p q) = Conj (equivalencia p) (equivalencia q)
+equivalencia (Disy p q) = Disy (equivalencia p) (equivalencia q)
+equivalencia (Impl p q) = (Disy (Neg p) (equivalencia q))
+equivalencia (Syss p q) = Conj (Disy (Neg p) (equivalencia q)) (Disy (Neg q) (equivalencia p))
+--equivalencia = error "D:"
 
 -- | Funcion que niega una proposicion
 negacion :: Prop -> Prop
@@ -103,8 +114,8 @@ esContradiccion = error "D:"
 -- | Funcion que dada una proposicion, dice True si es satisfacible,
 -- False en otro caso.
 esSatisfacible :: Prop -> Bool
-esSatisfacible = error "D:
-"
+esSatisfacible = error "D:"
+
 -- | Funcion que dada una proposicion, devuelve su tabla de verdad.
 tablaDeVerdad :: Prop -> Tabla
 tablaDeVerdad = error "D:"
