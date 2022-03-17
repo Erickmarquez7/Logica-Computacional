@@ -11,6 +11,7 @@
 - Deloya Andrade Ana Valeria   317277582
 - Perez Romero Natalia Abigail 318144265
 -}
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
 module LogProp where
 
@@ -118,7 +119,7 @@ negacion (Syss p q) = Neg (Syss p q)
 -- | Funcion que dada una proposicion y una sustitucion, sustituye las
 -- variables que correspondan. Sust = [(Name, Name)]
 sustituye :: Prop -> Sust -> Prop
-sustituye (Var p) (z:zs) = if (fst z == p) then (Var (snd z)) else (sustituye (Var p) (zs))
+sustituye (Var p) (z:zs) = if fst z == p then Var (snd z) else sustituye (Var p) zs
 sustituye (Neg p) (z:zs) =  Neg (sustituye p (z:zs))
 sustituye (Conj p q) (z:zs) = Conj (sustituye p (z:zs)) (sustituye q (z:zs))
 sustituye (Disy p q) (z:zs) = Disy (sustituye p (z:zs)) (sustituye q (z:zs))
@@ -145,12 +146,13 @@ interp (Syss p q) x = (not (interp p x) || interp q x) && (not (interp q x) || i
 
 interp :: Prop -> Estados -> Bool
 -- Lista de Estados = (Name, Bool)
-interp (Var p) (z:zs) = if (fst z == p) then snd z else interp (Var p) zs
-interp (Neg p) z = if (interp p z) == True then False else True
-interp (Conj p q) z = if (interp p z) == True && (interp q z) == True  then True else False
-interp (Disy p q) z = if (interp p z) == False && (interp q z) == False  then False else True
-interp (Impl p q) z = if (interp p z) == False then True else (interp q z)
-interp (Syss p q) z = if (interp p z) == (interp q z) then True else False
+interp (Var p) (z:zs) = if fst z == p then snd z else interp (Var p) zs
+interp (Neg p) z = not (interp p z)
+interp (Conj p q) z = interp p z && interp q z
+interp (Disy p q) z = not (not (interp p z) && not (interp q z))
+interp (Impl p q) z = not (interp p z) || interp q z
+interp (Syss p q) z = interp p z == interp q z
+-- es lo mismo solo que el editor me dijo que se ve mejor así xd
 
 -- | Funcion que dada una proposicion, dice True si es tautologia,
 -- False en otro caso.
@@ -176,10 +178,6 @@ esContradiccion (Var p)    = error "creo k necesitamos los valores de las variab
 --esContradiccion (Impl p q) = 
 --esContradiccion (Syss p q) = 
 
--- Hola buen día!
--- Para la practica en las funciones esTautologia y esContradicción
--- No se necesitaría que las variables tengan estado para poder sacar su valor de verdad?
--- O como podemos decir que es contradicción (o tautología) sin tener los valores de las variables?
 
 
 -- | Funcion que dada una proposicion, dice True si es satisfacible,
@@ -200,6 +198,13 @@ modelos = error "D:"
 --------------------------------------------------------------------------------
 --------                           AUXILIARES                           --------
 --------------------------------------------------------------------------------
+--función auxiliar para la potencia
+conjPoten :: Eq a => [a] -> [[a]]
+conjPoten []     = [[]]
+conjPoten (x:xs) = map (x: ) pt `union` pt
+  where 
+    pt = conjPoten xs
+
 
 --------------------------------------------------------------------------------
 --------                             EJEMPLOS                           --------
