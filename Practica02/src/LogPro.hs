@@ -133,7 +133,7 @@ sustituye (Syss p q) (z:zs) = Syss (sustituye p (z:zs)) (sustituye q (z:zs))
 
 -- type Estados = [Estado]
 -- type Estado = (Name, T/F)
-interp :: Prop -> Estados -> Bool
+{-interp :: Prop -> Estados -> Bool
 interp (Var p) [(q,b)] = if p==q then b else error ""-- es no hacer nada pk no coinciden las variables
                                                      -- pero no c como hacerlo en haskell gg
 {-x es una tupla (var, p)-}
@@ -141,8 +141,16 @@ interp (Neg p) x    = not (interp p x)
 interp (Conj p q) x =  interp p x || interp q x
 interp (Disy p q) x = interp p x && interp q x
 interp (Impl p q) x = not (interp p x) || interp q x
-interp (Syss p q) x = (not (interp p x) || interp q x) && (not (interp q x) || interp p x)
+interp (Syss p q) x = (not (interp p x) || interp q x) && (not (interp q x) || interp p x)-}
 
+interp :: Prop -> Estados -> Bool
+-- Lista de Estados = (Name, Bool)
+interp (Var p) (z:zs) = if (fst z == p) then snd z else interp (Var p) zs
+interp (Neg p) z = if (interp p z) == True then False else True
+interp (Conj p q) z = if (interp p z) == True && (interp q z) == True  then True else False
+interp (Disy p q) z = if (interp p z) == False && (interp q z) == False  then False else True
+interp (Impl p q) z = if (interp p z) == False then True else (interp q z)
+interp (Syss p q) z = if (interp p z) == (interp q z) then True else False
 
 -- | Funcion que dada una proposicion, dice True si es tautologia,
 -- False en otro caso.
