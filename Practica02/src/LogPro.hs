@@ -82,18 +82,29 @@ equivalencia (Var p) = Var p
 equivalencia (Neg p) = Neg (equivalencia p)
 equivalencia (Conj p q) = Conj (equivalencia p) (equivalencia q)
 equivalencia (Disy p q) = Disy (equivalencia p) (equivalencia q)
-equivalencia (Impl p q) = (Disy (Neg p) (equivalencia q))
-equivalencia (Syss p q) = Conj (Disy (Neg p) (equivalencia q)) (Disy (Neg q) (equivalencia p))
---equivalencia = error "D:"
+equivalencia (Impl p q) = Disy (Neg p) (equivalencia q)
+equivalencia (Syss p q) = Conj (Disy (equivalencia p) (equivalencia q)) (Disy (Neg q) (Neg p))
 
 -- | Funcion que niega una proposicion
 negacion :: Prop -> Prop
-negacion = error "D:"
+negacion (Var p) = Neg (Var p)
+negacion (Neg p) =  Neg (negacion p)
+negacion (Conj p q) = Disy (negacion p) (negacion q)
+negacion (Disy p q) = Conj (negacion p) (negacion q)
+negacion (Impl p q) = Conj p (Neg q)
+negacion (Syss p q) = Neg (Syss p q)
+--negacion = error "D:"
 
 -- | Funcion que dada una proposicion y una sustitucion, sustituye las
--- variables que correspondan.
+-- variables que correspondan. Sust = [(Name, Name)]
 sustituye :: Prop -> Sust -> Prop
-sustituye = error "D:"
+sustituye (Var p) (z:zs) = if (fst z == p) then (Var (snd z)) else (sustituye (Var p) (zs))
+sustituye (Neg p) (z:zs) =  Neg (sustituye p (z:zs))
+sustituye (Conj p q) (z:zs) = Conj (sustituye p (z:zs)) (sustituye q (z:zs))
+sustituye (Disy p q) (z:zs) = Disy (sustituye p (z:zs)) (sustituye q (z:zs))
+sustituye (Impl p q) (z:zs) = Impl (sustituye p (z:zs)) (sustituye q (z:zs))
+sustituye (Syss p q) (z:zs) = Syss (sustituye p (z:zs)) (sustituye q (z:zs))
+--sustituye = error "D:"
 
 -- | Funcion que dada una proposición y estados, evalua la proposicion
 -- asignando el estado que corresponda. Si no existe una variable,
