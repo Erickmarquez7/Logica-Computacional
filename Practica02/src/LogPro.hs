@@ -87,7 +87,7 @@ instance Eq Prop where
 -- | Funcion que saca todos los átomos de una proposicion.
 varList :: Prop -> [Name]
 varList (Var p) = [p]
-varList (Neg p) = varList p 
+varList (Neg p) = varList p
 varList (Conj p q) = varList p ++ varList q
 varList (Disy p q) = varList p ++ varList q
 varList (Impl p q) = varList p ++ varList q
@@ -112,7 +112,7 @@ equivalencia (Syss p q) = Conj (Disy (Neg p) (equivalencia q)) (Disy (Neg q) (eq
 negacion :: Prop -> Prop
 negacion (Var p) = Neg (Var p)
 negacion (Neg p) = p
-negacion (Conj p q) = Conj (negacion p) (negacion q) 
+negacion (Conj p q) = Conj (negacion p) (negacion q)
 negacion (Disy p q) = Disy (negacion p) (negacion q)
 negacion (Impl p q) = Impl (negacion p) (negacion q)
 negacion (Syss p q) = Syss (negacion p) (negacion q)
@@ -123,28 +123,59 @@ negacion (Syss p q) = Syss (negacion p) (negacion q)
 -- type Sust = [(Name,Name)]
 sustituye :: Prop -> Sust -> Prop
 sustituye (Var p) [(q,r)] = if p==q then Var r else Var p
-sustituye (Neg p) x = sustituye p x
+sustituye (Neg p)    x = Neg (sustituye p x)
 sustituye (Conj p q) x = Conj (sustituye p x) (sustituye q x)
 sustituye (Disy p q) x = Disy (sustituye p x) (sustituye q x)
 sustituye (Impl p q) x = Impl (sustituye p x) (sustituye q x)
 sustituye (Syss p q) x = Syss (sustituye p x) (sustituye q x)
- 
+
 
 -- | Funcion que dada una proposición y estados, evalua la proposicion
 -- asignando el estado que corresponda. Si no existe una variable,
 -- maneja el error.
+
+-- type Estados = [Estado]
+-- type Estado = (Name, T/F)
 interp :: Prop -> Estados -> Bool
-interp = error "D:"
+interp (Var p) [(q,b)] = if p==q then b else error ""-- es no hacer nada pk no coinciden las variables
+                                                     -- pero no c como hacerlo en haskell gg
+{-x es una tupla (var, p)-}
+interp (Neg p) x    = not (interp p x)
+interp (Conj p q) x =  interp p x || interp q x
+interp (Disy p q) x = interp p x && interp q x
+interp (Impl p q) x = not (interp p x) || interp q x
+interp (Syss p q) x = (not (interp p x) || interp q x) && (not (interp q x) || interp p x)
+
 
 -- | Funcion que dada una proposicion, dice True si es tautologia,
 -- False en otro caso.
 esTautologia :: Prop -> Bool
-esTautologia = error "D:"
+esTautologia (Var p)    = error "creo k necesitamos los valores de las variables xd, le wua preguntar al ayudante "
+--esTautologia (Neg p)    = 
+--esTautologia (Conj p q) = 
+--esTautologia (Disy p q) = 
+--esTautologia (Impl p q) = 
+--esTautologia (Syss p q) = 
+-- idea
+-- interpretar -> [t,f,t,f...] = lis
+-- if (lis =t) return true
+  -- else false
 
 -- | Funcion que dada una proposicion, dice True si es una
 -- contradiccion, False en otro caso.
 esContradiccion :: Prop -> Bool
-esContradiccion = error "D:"
+esContradiccion (Var p)    = error "creo k necesitamos los valores de las variables xd, le wua preguntar al ayudante "
+--esContradiccion (Neg p)    = 
+--esContradiccion (Conj p q) = 
+--esContradiccion (Disy p q) = 
+--esContradiccion (Impl p q) = 
+--esContradiccion (Syss p q) = 
+
+-- Hola buen día!
+-- Para la practica en las funciones esTautologia y esContradicción
+-- No se necesitaría que las variables tengan estado para poder sacar su valor de verdad?
+-- O como podemos decir que es contradicción (o tautología) sin tener los valores de las variables?
+
 
 -- | Funcion que dada una proposicion, dice True si es satisfacible,
 -- False en otro caso.
@@ -152,6 +183,7 @@ esSatisfacible :: Prop -> Bool
 esSatisfacible = error "D:"
 
 -- | Funcion que dada una proposicion, devuelve su tabla de verdad.
+
 tablaDeVerdad :: Prop -> Tabla
 tablaDeVerdad = error "D:"
 
@@ -198,3 +230,10 @@ interp2 = interp imp [("Q",True), ("P",True)]
 -- Regresa: error
 interp3 = interp imp [("Q",True), ("P",True), ("R",True)]
 -- Regresa: False
+
+tauto :: Prop
+tauto = Conj (Var "P") (Neg (Var "P"))
+-- se supone es tauto
+
+contra :: Prop
+contra = Disy (Var "P") (Neg (Var "P"))
