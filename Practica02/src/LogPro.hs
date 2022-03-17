@@ -11,7 +11,6 @@
 - Deloya Andrade Ana Valeria   317277582
 - Perez Romero Natalia Abigail 318144265
 -}
-{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
 module LogProp where
 
@@ -115,7 +114,6 @@ negacion (Conj p q) = Disy (negacion p) (negacion q)
 negacion (Disy p q) = Conj (negacion p) (negacion q)
 negacion (Impl p q) = Conj p (Neg q)
 negacion (Syss p q) = Neg (Syss p q)
---negacion = error "D:"
 
 -- | Funcion que dada una proposicion y una sustitucion, sustituye las
 -- variables que correspondan. Sust = [(Name, Name)]
@@ -126,24 +124,7 @@ sustituye (Conj p q) (z:zs) = Conj (sustituye p (z:zs)) (sustituye q (z:zs))
 sustituye (Disy p q) (z:zs) = Disy (sustituye p (z:zs)) (sustituye q (z:zs))
 sustituye (Impl p q) (z:zs) = Impl (sustituye p (z:zs)) (sustituye q (z:zs))
 sustituye (Syss p q) (z:zs) = Syss (sustituye p (z:zs)) (sustituye q (z:zs))
---sustituye = error "D:"
-negacion (Neg p) = p
-negacion (Conj p q) = Conj (negacion p) (negacion q)
-negacion (Disy p q) = Disy (negacion p) (negacion q)
-negacion (Impl p q) = Impl (negacion p) (negacion q)
-negacion (Syss p q) = Syss (negacion p) (negacion q)
 
-
--- | Funcion que dada una proposicion y una sustitucion, sustituye las
--- variables que correspondan.
--- type Sust = [(Name,Name)]
-sustituye :: Prop -> Sust -> Prop
-sustituye (Var p) [(q,r)] = if p==q then Var r else Var p
-sustituye (Neg p)    x = Neg (sustituye p x)
-sustituye (Conj p q) x = Conj (sustituye p x) (sustituye q x)
-sustituye (Disy p q) x = Disy (sustituye p x) (sustituye q x)
-sustituye (Impl p q) x = Impl (sustituye p x) (sustituye q x)
-sustituye (Syss p q) x = Syss (sustituye p x) (sustituye q x)
 
 
 -- | Funcion que dada una proposición y estados, evalua la proposicion
