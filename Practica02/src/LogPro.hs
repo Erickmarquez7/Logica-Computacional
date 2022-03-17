@@ -147,7 +147,7 @@ interp (Syss p q) x = (not (interp p x) || interp q x) && (not (interp q x) || i
 -- | Funcion que dada una proposicion, dice True si es tautologia,
 -- False en otro caso.
 esTautologia :: Prop -> Bool
-esTautologia (Var p)    = error "creo k necesitamos los valores de las variables xd, le wua preguntar al ayudante "
+esTautologia (Var p) = error "creo k necesitamos los valores de las variables xd, le wua preguntar al ayudante "
 --esTautologia (Neg p)    = 
 --esTautologia (Conj p q) = 
 --esTautologia (Disy p q) = 
