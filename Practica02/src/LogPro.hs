@@ -92,10 +92,7 @@ varList (Conj p q) = varList p ++ varList q
 varList (Disy p q) = varList p ++ varList q
 varList (Impl p q) = varList p ++ varList q
 varList (Syss p q) = varList p ++ varList q
--- varList "el awa es verde " -> ["el awa es verde "]
--- varList (Neg "el awa es verde ") -> VarList "el awa es verde"
--- varList (conj "el awa.." "el sielo") -> varList "awa" ++ varList "sielo" -> awa ++ sielo 
--- 
+
 
 -- | Funcion que elimina las implicaciones y dobles implicaciones de
 -- una proposicion.
@@ -131,38 +128,26 @@ sustituye (Syss p q) (z:zs) = Syss (sustituye p (z:zs)) (sustituye q (z:zs))
 -- | Funcion que dada una proposición y estados, evalua la proposicion
 -- asignando el estado que corresponda. Si no existe una variable,
 -- maneja el error.
-
--- type Estados = [Estado]
--- type Estado = (Name, T/F)
-{-interp :: Prop -> Estados -> Bool
-interp (Var p) [(q,b)] = if p==q then b else error ""-- es no hacer nada pk no coinciden las variables
-                                                     -- pero no c como hacerlo en haskell gg
-{-x es una tupla (var, p)-}
-interp (Neg p) x    = not (interp p x)
-interp (Conj p q) x =  interp p x || interp q x
-interp (Disy p q) x = interp p x && interp q x
-interp (Impl p q) x = not (interp p x) || interp q x
-interp (Syss p q) x = (not (interp p x) || interp q x) && (not (interp q x) || interp p x)-}
-
 interp :: Prop -> Estados -> Bool
--- Lista de Estados = (Name, Bool)
 interp (Var p) (z:zs) = if fst z == p then snd z else interp (Var p) zs
 interp (Neg p) z = not (interp p z)
 interp (Conj p q) z = interp p z && interp q z
 interp (Disy p q) z = not (not (interp p z) && not (interp q z))
 interp (Impl p q) z = not (interp p z) || interp q z
 interp (Syss p q) z = interp p z == interp q z
--- es lo mismo solo que el editor me dijo que se ve mejor así xd
+-- es lo mismo solo que el editor me dijo que se ve mejor así xd. 
+--No hagas cosas solo porque el editor lo dice, porque el editor puede importar librerias que no se supone que usemos
+-- Y a veces ya no queda claro que hace.
 
 -- | Funcion que dada una proposicion, dice True si es tautologia,
 -- False en otro caso.
 esTautologia :: Prop -> Bool
-esTautologia (Var p) = error "creo k necesitamos los valores de las variables xd, le wua preguntar al ayudante "
---esTautologia (Neg p)    = 
---esTautologia (Conj p q) = 
---esTautologia (Disy p q) = 
---esTautologia (Impl p q) = 
---esTautologia (Syss p q) = 
+esTautologia (Var p) = interp (Var p) (generaEstados (varList (Var p)))
+esTautologia (Neg p) = interp (p) (generaEstados (varList (p)))
+esTautologia (Conj p q) = interp (Conj p q) (generaEstados (varList p)++generaEstados(varList q))
+esTautologia (Disy p q) = interp (Disy p q) (generaEstados (varList p)++generaEstados(varList q))
+esTautologia (Impl p q) = interp (Impl p q) (generaEstados (varList p)++generaEstados(varList q))
+esTautologia (Syss p q) = interp (Syss p q) (generaEstados (varList p)++generaEstados(varList q))
 -- idea
 -- interpretar -> [t,f,t,f...] = lis
 -- if (lis =t) return true
@@ -204,6 +189,13 @@ conjPoten []     = [[]]
 conjPoten (x:xs) = map (x: ) pt `union` pt
   where 
     pt = conjPoten xs
+
+--función auxiliar para dar una lista de los posibles Estados de una variable
+--type Estado = (Name, Bool) 
+-- type Estados = [Estado]
+generaEstados:: [Name] -> Estados
+generaEstados [] = []
+generaEstados (x:xs) = [(x,False)]++[(x,True)]++generaEstados(xs)
 
 
 --------------------------------------------------------------------------------
