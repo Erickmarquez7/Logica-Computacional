@@ -1,3 +1,5 @@
+
+-- prueba xd
 {-
 - Lógica Computacional 2022-2
 - Profesor: Francisco Hernández Quiroz
