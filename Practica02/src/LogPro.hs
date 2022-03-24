@@ -1,4 +1,3 @@
--- git prueba del main
 {-
 - Lógica Computacional 2022-2
 - Profesor: Francisco Hernández Quiroz
@@ -12,7 +11,9 @@
 - Deloya Andrade Ana Valeria   317277582
 - Perez Romero Natalia Abigail 318144265
 -}
-{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use foldr" #-}
+
 
 module LogProp where
 
@@ -25,6 +26,7 @@ data Prop =
   | Disy Prop Prop
   | Impl Prop Prop
   | Syss Prop Prop deriving Show
+ 
 
 -- El tipo type es sinonimo
 -- Variables.
@@ -107,16 +109,22 @@ equivalencia (Syss p q) = Conj (Disy (equivalencia p) (equivalencia q)) (Disy (N
 
 -- | Funcion que niega una proposicion
 negacion :: Prop -> Prop
-negacion (Var p) = Neg (Var p)
-negacion (Neg p) =  Neg (negacion p)
+negacion (Var p)    = Neg (Var p)
+negacion (Neg p)    =   p
 negacion (Conj p q) = Disy (negacion p) (negacion q)
 negacion (Disy p q) = Conj (negacion p) (negacion q)
-negacion (Impl p q) = Conj p (Neg q)
-negacion (Syss p q) = Neg (Syss p q)
+negacion (Impl p q) = Conj p (negacion q)
+negacion (Syss p q) = negacion (Syss p q)
 
 -- | Funcion que dada una proposicion y una sustitucion, sustituye las
 -- variables que correspondan. Sust = [(Name, Name)]
 sustituye :: Prop -> Sust -> Prop
+sustituye (Var _) []    = error "Alguna variable no coinciden con la variable a sustituir" 
+sustituye (Neg _) []    = error "Alguna variable no coinciden con la variable a sustituir"
+sustituye (Conj _ _) [] = error "Alguna variable no coinciden con la variable a sustituir"
+sustituye (Disy _ _) [] = error "Alguna variable no coinciden con la variable a sustituir"
+sustituye (Impl _ _) [] = error "Alguna variable no coinciden con la variable a sustituir"
+sustituye (Syss _ _) [] = error "Alguna variable no coinciden con la variable a sustituir"
 sustituye (Var p) (z:zs) = if fst z == p then Var (snd z) else sustituye (Var p) zs
 sustituye (Neg p) (z:zs) =  Neg (sustituye p (z:zs))
 sustituye (Conj p q) (z:zs) = Conj (sustituye p (z:zs)) (sustituye q (z:zs))
@@ -126,38 +134,38 @@ sustituye (Syss p q) (z:zs) = Syss (sustituye p (z:zs)) (sustituye q (z:zs))
 
 
 
+
 -- | Funcion que dada una proposición y estados, evalua la proposicion
 -- asignando el estado que corresponda. Si no existe una variable,
 -- maneja el error.
 interp :: Prop -> Estados -> Bool
+interp (Var _) [] = error "Insuficientes Var"
 interp (Var p) (z:zs) = if fst z == p then snd z else interp (Var p) zs
 interp (Neg p) z = not (interp p z)
 interp (Conj p q) z = interp p z && interp q z
 interp (Disy p q) z = not (not (interp p z) && not (interp q z))
 interp (Impl p q) z = not (interp p z) || interp q z
 interp (Syss p q) z = interp p z == interp q z
--- es lo mismo solo que el editor me dijo que se ve mejor así xd. 
---No hagas cosas solo porque el editor lo dice, porque el editor puede importar librerias que no se supone que usemos
--- Y a veces ya no queda claro que hace.
 
 -- | Funcion que dada una proposicion, dice True si es tautologia,
 -- False en otro caso.
 esTautologia :: Prop -> Bool
-esTautologia (Var p) = interp (Var p) (generaEstados (varList (Var p)))
-esTautologia (Neg p) = interp (p) (generaEstados (varList (p)))
-esTautologia (Conj p q) = interp (Conj p q) (generaEstados (varList p)++generaEstados(varList q))
-esTautologia (Disy p q) = interp (Disy p q) (generaEstados (varList p)++generaEstados(varList q))
-esTautologia (Impl p q) = interp (Impl p q) (generaEstados (varList p)++generaEstados(varList q))
-esTautologia (Syss p q) = interp (Syss p q) (generaEstados (varList p)++generaEstados(varList q))
+esTautologia (Var p)    = error "a"
+--esTautologia (Neg p)    = --interp p (generaEstados (varList p))
+--esTautologia (Conj p q) = --interp (Conj p q) (generaEstados (varList p)++generaEstados(varList q))
+--esTautologia (Disy p q) = --interp (Disy p q) (generaEstados (varList p)++generaEstados(varList q))
+--esTautologia (Impl p q) = --interp (Impl p q) (generaEstados (varList p)++generaEstados(varList q))
+--esTautologia (Syss p q) = --interp (Syss p q) (generaEstados (varList p)++generaEstados(varList q))
 -- idea
 -- interpretar -> [t,f,t,f...] = lis
 -- if (lis =t) return true
   -- else false
 
+
 -- | Funcion que dada una proposicion, dice True si es una
 -- contradiccion, False en otro caso.
 esContradiccion :: Prop -> Bool
-esContradiccion (Var p)    = error "creo k necesitamos los valores de las variables xd, le wua preguntar al ayudante "
+esContradiccion (Var p) = error ""
 --esContradiccion (Neg p)    = 
 --esContradiccion (Conj p q) = 
 --esContradiccion (Disy p q) = 
@@ -191,12 +199,31 @@ conjPoten (x:xs) = map (x: ) pt `union` pt
   where 
     pt = conjPoten xs
 
+--generaEstados2xd :: Prop -> Estados
+--generaEstados2xd p = conjPoten(varList p)
+
 --función auxiliar para dar una lista de los posibles Estados de una variable
 --type Estado = (Name, Bool) 
 -- type Estados = [Estado]
 generaEstados:: [Name] -> Estados
 generaEstados [] = []
-generaEstados (x:xs) = [(x,False)]++[(x,True)]++generaEstados(xs)
+generaEstados (x:xs) = [(x,False)]++[(x,True)]++generaEstados xs
+
+
+-- Nos dice si todos los elementos de los estados son verdaderos
+compruebaV:: [Bool] -> Bool
+compruebaV [] = True
+compruebaV (x:xs) =  x && compruebaV xs
+
+-- Nos dice si todos los elementos de los estados son Falsos
+compruebaF:: [Bool] -> Bool
+compruebaF [] = True
+compruebaF (x:xs) = not x && compruebaF xs
+
+
+esta :: Eq a => a -> [a] -> Bool
+esta _ [] = False
+esta y (x:xs) = y==x || esta y xs
 
 
 --------------------------------------------------------------------------------
@@ -206,6 +233,9 @@ generaEstados (x:xs) = [(x,False)]++[(x,True)]++generaEstados(xs)
 imp :: Prop
 imp = Impl (Var "P") (Conj (Var "Q") (Neg (Var "R")))
 
+-- P -> (Q v ¬R)
+
+-- Ejemplo de 
 varList1 = varList imp
 -- Regresa: ["P", "Q", "R"]
 
@@ -219,7 +249,8 @@ equivalencia2 = equivalencia (Syss imp imp)
 -- "R"))))) (Disy (Neg (Var "P")) (Conj (Var "Q") (Neg (Var "R")))))
 
 negacion1 = negacion imp
--- Regresa: Conj (Var "P") (Disy (Neg (Var "Q")) (Var "R"))
+-- Regresa: Conj (Var "P")  (Disy (Neg (Var "Q")) (Var "R"))
+
 
 negacion2 = negacion (Neg imp)
 -- Regresa: Impl (Var "P") (Conj (Var "Q") (Neg (Var "R")))
@@ -227,6 +258,7 @@ negacion2 = negacion (Neg imp)
 sustituye1 = sustituye imp [("P", "A"), ("Q", "B"), ("R", "C")]
 -- Regresa: Impl (Var "A") (Conj (Var "B") (Neg (Var "C")))
 
+ 
 interp1 = interp imp [("Q",True), ("P",False)]
 -- Regresa: True
 interp2 = interp imp [("Q",True), ("P",True)]
@@ -234,9 +266,3 @@ interp2 = interp imp [("Q",True), ("P",True)]
 interp3 = interp imp [("Q",True), ("P",True), ("R",True)]
 -- Regresa: False
 
-tauto :: Prop
-tauto = Conj (Var "P") (Neg (Var "P"))
--- se supone es tauto
-
-contra :: Prop
-contra = Disy (Var "P") (Neg (Var "P"))
