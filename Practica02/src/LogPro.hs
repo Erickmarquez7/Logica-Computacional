@@ -26,7 +26,7 @@ data Prop =
   | Disy Prop Prop
   | Impl Prop Prop
   | Syss Prop Prop deriving Show
- 
+
 
 -- El tipo type es sinonimo
 -- Variables.
@@ -119,7 +119,7 @@ negacion (Syss p q) = negacion (Syss p q)
 -- | Funcion que dada una proposicion y una sustitucion, sustituye las
 -- variables que correspondan. Sust = [(Name, Name)]
 sustituye :: Prop -> Sust -> Prop
-sustituye (Var _) []    = error "Alguna variable no coinciden con la variable a sustituir" 
+sustituye (Var _) []    = error "Alguna variable no coinciden con la variable a sustituir"
 sustituye (Neg _) []    = error "Alguna variable no coinciden con la variable a sustituir"
 sustituye (Conj _ _) [] = error "Alguna variable no coinciden con la variable a sustituir"
 sustituye (Disy _ _) [] = error "Alguna variable no coinciden con la variable a sustituir"
@@ -196,18 +196,34 @@ modelos = error "D:"
 conjPoten :: Eq a => [a] -> [[a]]
 conjPoten []     = [[]]
 conjPoten (x:xs) = map (x: ) pt `union` pt
-  where 
+  where
     pt = conjPoten xs
 
---generaEstados2xd :: Prop -> Estados
---generaEstados2xd p = conjPoten(varList p)
+
+--  Mis pobres intentos de obtener los valores xp
+daValor:: Name -> Bool
+daValor p = p /= []
+
+generaEstado :: Name -> Estado
+generaEstado p = (p , daValor p)
+
+generaEstados:: [Name] -> Estados
+--generaEstados [] = []
+--generaEstados (_:_:_) = []
+--generaEstados [n] = [(n,b) | b <- daValor n] 
+
+generaEstados p = [(a,True) | a <-p]
 
 --función auxiliar para dar una lista de los posibles Estados de una variable
 --type Estado = (Name, Bool) 
--- type Estados = [Estado]
-generaEstados:: [Name] -> Estados
-generaEstados [] = []
-generaEstados (x:xs) = [(x,False)]++[(x,True)]++generaEstados xs
+--type Estados = [Estado]
+--generaEstados:: [Name] -> Estados
+--generaEstados [] = []
+--generaEstados (x:xs) = [(x,False)]++[(x,True)]++generaEstados xs
+
+
+
+
 
 
 -- Nos dice si todos los elementos de los estados son verdaderos
@@ -258,7 +274,7 @@ negacion2 = negacion (Neg imp)
 sustituye1 = sustituye imp [("P", "A"), ("Q", "B"), ("R", "C")]
 -- Regresa: Impl (Var "A") (Conj (Var "B") (Neg (Var "C")))
 
- 
+
 interp1 = interp imp [("Q",True), ("P",False)]
 -- Regresa: True
 interp2 = interp imp [("Q",True), ("P",True)]
