@@ -128,27 +128,42 @@ sustituye (Syss p q) (z:zs) = Syss (sustituye p (z:zs)) (sustituye q (z:zs))
 -- | Funcion que dada una proposición y estados, evalua la proposicion
 -- asignando el estado que corresponda. Si no existe una variable,
 -- maneja el error.
+--            p || q || r  -> [(p,T), (q,F), (r,T)] ->V
 interp :: Prop -> Estados -> Bool
 interp (Var p) (z:zs) = if fst z == p then snd z else interp (Var p) zs
 interp (Neg p) z = not (interp p z)
 interp (Conj p q) z = interp p z && interp q z
-interp (Disy p q) z = not (not (interp p z) && not (interp q z))
+interp (Disy p q) z = interp p z || interp q z
 interp (Impl p q) z = not (interp p z) || interp q z
 interp (Syss p q) z = interp p z == interp q z
 -- es lo mismo solo que el editor me dijo que se ve mejor así xd. 
 --No hagas cosas solo porque el editor lo dice, porque el editor puede importar librerias que no se supone que usemos
 -- Y a veces ya no queda claro que hace.
 
+
+
 -- | Funcion que dada una proposicion, dice True si es tautologia,
 -- False en otro caso.
+-- interpreta :: prop -> Estados -> bool
+-- compruebaV :: Estados -> bool
+
+-- generaEst :: [Name] -> Estados
+-- varList :: Prop -> [Name] 
+
+-- EsT Var p =  inter varP (generaEstados(varList p)) -> bool
+-- Comprueba [t,t,t,t]
+-- CompruebaV [inter varP (generaEstados(varList p)), ]
+
 esTautologia :: Prop -> Bool
---                    interpretamos a p <-- (Generamos los estados de la variable   <--Sacamos las variables)
-esTautologia (Var p) = interp (Var p) (generaEstados (varList (Var p)))
-esTautologia (Neg p) = interp p (generaEstados (varList p))
-esTautologia (Conj p q) = interp (Conj p q) (generaEstados (varList p)++generaEstados(varList q))
-esTautologia (Disy p q) = interp (Disy p q) (generaEstados (varList p)++generaEstados(varList q))
-esTautologia (Impl p q) = interp (Impl p q) (generaEstados (varList p)++generaEstados(varList q))
-esTautologia (Syss p q) = interp (Syss p q) (generaEstados (varList p)++generaEstados(varList q))
+--   interpretamos a p <-- (Generamos los estados de la variable   <--Sacamos las variables)
+esTautologia p = compruebaV [interp p (generaEstados (varList p))]
+
+-- esTautologia (Var p) = interp (Var p) (generaEstados (varList (Var p)))
+-- esTautologia (Neg p) = interp p (generaEstados (varList p))
+-- esTautologia (Conj p q) = interp (Conj p q) (generaEstados (varList p)++generaEstados(varList q))
+-- esTautologia (Disy p q) = interp (Disy p q) (generaEstados (varList p)++generaEstados(varList q))
+-- esTautologia (Impl p q) = interp (Impl p q) (generaEstados (varList p)++generaEstados(varList q))
+-- esTautologia (Syss p q) = interp (Syss p q) (generaEstados (varList p)++generaEstados(varList q))
 -- idea
 -- interpretar -> [t,f,t,f...] = lis
 -- if (lis =t) return true
@@ -157,19 +172,20 @@ esTautologia (Syss p q) = interp (Syss p q) (generaEstados (varList p)++generaEs
 -- | Funcion que dada una proposicion, dice True si es una
 -- contradiccion, False en otro caso.
 esContradiccion :: Prop -> Bool
-esContradiccion (Var p)    = error "creo k necesitamos los valores de las variables xd, le wua preguntar al ayudante "
---esContradiccion (Neg p)    = 
---esContradiccion (Conj p q) = 
---esContradiccion (Disy p q) = 
---esContradiccion (Impl p q) = 
---esContradiccion (Syss p q) = 
+esContradiccion p = compruebaF [interp p (generaEstados (varList p))]
+-- esContradiccion (Var p)    = not (interp (Var p) (generaEstados (varList (Var p))))
+-- esContradiccion (Neg p)    = 
+-- esContradiccion (Conj p q) = 
+-- esContradiccion (Disy p q) = 
+-- esContradiccion (Impl p q) = 
+-- esContradiccion (Syss p q) = 
 
 
 
 -- | Funcion que dada una proposicion, dice True si es satisfacible,
 -- False en otro caso.
 esSatisfacible :: Prop -> Bool
-esSatisfacible = error "D:"
+esSatisfacible p = not (esContradiccion p)
 
 -- | Funcion que dada una proposicion, devuelve su tabla de verdad.
 
@@ -201,14 +217,23 @@ generaEstados (x:xs) = [(x,False)]++[(x,True)]++generaEstados xs
 -- [(x,V),(x,F), (y,V), (y,F) ...   ]
 
 -- [ (), ()...]
--- Nos dice si todos los elementos de una
-comprueba:: Estados -> Bool
-comprueba [] = True
-comprueba (x:xs) = snd x && comprueba xs
+-- Nos dice si todos los elementos de los estados son verdaderos
+compruebaV:: [Bool] -> Bool
+compruebaV [] = True
+compruebaV (x:xs) =  x && compruebaV xs
 
+-- Nos dice si todos los elementos de los estados son Falsos
+compruebaF:: [Bool] -> Bool
+compruebaF [] = True
+compruebaF (x:xs) = not x && compruebaF xs
+
+
+esta :: Eq a => a -> [a] -> Bool
+esta _ [] = False
+esta y (x:xs) = y==x || esta y xs
 --------------------------------------------------------------------------------
 --------                             EJEMPLOS                           --------
---------------------------------------------------------------------------------
+---------------------------------------s-----------------------------------------
 
 imp :: Prop
 imp = Impl (Var "P") (Conj (Var "Q") (Neg (Var "R")))
