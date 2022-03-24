@@ -142,8 +142,9 @@ interp (Syss p q) z = interp p z == interp q z
 -- | Funcion que dada una proposicion, dice True si es tautologia,
 -- False en otro caso.
 esTautologia :: Prop -> Bool
+--                    interpretamos a p <-- (Generamos los estados de la variable   <--Sacamos las variables)
 esTautologia (Var p) = interp (Var p) (generaEstados (varList (Var p)))
-esTautologia (Neg p) = interp (p) (generaEstados (varList (p)))
+esTautologia (Neg p) = interp p (generaEstados (varList p))
 esTautologia (Conj p q) = interp (Conj p q) (generaEstados (varList p)++generaEstados(varList q))
 esTautologia (Disy p q) = interp (Disy p q) (generaEstados (varList p)++generaEstados(varList q))
 esTautologia (Impl p q) = interp (Impl p q) (generaEstados (varList p)++generaEstados(varList q))
@@ -187,16 +188,23 @@ modelos = error "D:"
 conjPoten :: Eq a => [a] -> [[a]]
 conjPoten []     = [[]]
 conjPoten (x:xs) = map (x: ) pt `union` pt
-  where 
+  where
     pt = conjPoten xs
 
---función auxiliar para dar una lista de los posibles Estados de una variable
+--función auxiliar para dar una lista de los posibles Estados de una variable, V y F para cada Proposición
 --type Estado = (Name, Bool) 
--- type Estados = [Estado]
+--type Estado = (Name, Bool) --("el awa es verde", F) 
+--type Estados = [Estado]
 generaEstados:: [Name] -> Estados
 generaEstados [] = []
-generaEstados (x:xs) = [(x,False)]++[(x,True)]++generaEstados(xs)
+generaEstados (x:xs) = [(x,False)]++[(x,True)]++generaEstados xs
+-- [(x,V),(x,F), (y,V), (y,F) ...   ]
 
+-- [ (), ()...]
+-- Nos dice si todos los elementos de una
+comprueba:: Estados -> Bool
+comprueba [] = True
+comprueba (x:xs) = snd x && comprueba xs
 
 --------------------------------------------------------------------------------
 --------                             EJEMPLOS                           --------
