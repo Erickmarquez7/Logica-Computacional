@@ -62,15 +62,15 @@ type Renglon = (Estados, Bool)
 --     ([(p, T)(q, F)(q,T)...],T), ]
 type Tabla = [Renglon]
 
-
-{-- Instancia para Show
-instance Show Prop where
+-- Descomentar esta clase para que sea vea mas bonito y comentar deriving Show de data Prop
+-- Instancia para Show
+{-instance Show Prop where
   show (Var x)    = show x
   show (Neg x)    = "¬"++ (show x)
   show (Conj x y) = "(" ++ show x ++ " Λ " ++ show y ++ ")"
   show (Disy x y) = "(" ++ show x ++ " ∨ " ++ show y ++ ")"
   show (Impl x y) = "(" ++ show x ++ " → " ++ show y ++ ")"
-  show (Syss x y) = "(" ++ show x ++ " ↔ " ++ show y ++ ")"}-}
+  show (Syss x y) = "(" ++ show x ++ " ↔ " ++ show y ++ ")"-}
 
 
 -- Instancia para Eq
@@ -104,27 +104,30 @@ equivalencia (Var p) = Var p
 equivalencia (Neg p) = Neg (equivalencia p)
 equivalencia (Conj p q) = Conj (equivalencia p) (equivalencia q)
 equivalencia (Disy p q) = Disy (equivalencia p) (equivalencia q)
-equivalencia (Impl p q) = Disy (Neg p) (equivalencia q)
-equivalencia (Syss p q) = Conj (Disy (equivalencia p) (equivalencia q)) (Disy (Neg q) (Neg p))
+equivalencia (Impl p q) = Disy (Neg (equivalencia p)) (equivalencia q) -- ¬P v Q
+equivalencia (Syss p q) = Conj (Disy (equivalencia p) (equivalencia q)) (Disy (Neg ( equivalencia q)) (Neg (equivalencia p)))
+
 
 -- | Funcion que niega una proposicion
 negacion :: Prop -> Prop
 negacion (Var p)    = Neg (Var p)
-negacion (Neg p)    =   p
-negacion (Conj p q) = Disy (negacion p) (negacion q)
+negacion (Neg p)    = p
+negacion (Conj p q) = Disy (negacion p) (negacion q) -- Por Morgan
 negacion (Disy p q) = Conj (negacion p) (negacion q)
-negacion (Impl p q) = Conj p (negacion q)
-negacion (Syss p q) = negacion (Syss p q)
+negacion (Impl p q) = Conj p (negacion q) -- pasamos a su eq y la negamos
+negacion (Syss p q) = Disy (negacion (Impl p q)) (negacion (Impl q p)) --de la misma manera sacamos eq y la negamos
+-- en principio es ¬syss p q -> ¬{p->q y q->p} -> {¬(p->q) o ¬(q->p)}  por eso nos quedamos con la disy
+
 
 -- | Funcion que dada una proposicion y una sustitucion, sustituye las
 -- variables que correspondan. Sust = [(Name, Name)]
 sustituye :: Prop -> Sust -> Prop
-sustituye (Var _) []    = error "Alguna variable no coinciden con la variable a sustituir"
-sustituye (Neg _) []    = error "Alguna variable no coinciden con la variable a sustituir"
-sustituye (Conj _ _) [] = error "Alguna variable no coinciden con la variable a sustituir"
-sustituye (Disy _ _) [] = error "Alguna variable no coinciden con la variable a sustituir"
-sustituye (Impl _ _) [] = error "Alguna variable no coinciden con la variable a sustituir"
-sustituye (Syss _ _) [] = error "Alguna variable no coinciden con la variable a sustituir"
+sustituye (Var _) []    = error "Alguna variable no coincide con la variable a sustituir"
+sustituye (Neg _) []    = error "Alguna variable no coincide con la variable a sustituir"
+sustituye (Conj _ _) [] = error "Alguna variable no coincide con la variable a sustituir"
+sustituye (Disy _ _) [] = error "Alguna variable no coincide con la variable a sustituir"
+sustituye (Impl _ _) [] = error "Alguna variable no coincide con la variable a sustituir"
+sustituye (Syss _ _) [] = error "Alguna variable no coincide con la variable a sustituir"
 sustituye (Var p) (z:zs) = if fst z == p then Var (snd z) else sustituye (Var p) zs
 sustituye (Neg p) (z:zs) =  Neg (sustituye p (z:zs))
 sustituye (Conj p q) (z:zs) = Conj (sustituye p (z:zs)) (sustituye q (z:zs))
@@ -133,65 +136,60 @@ sustituye (Impl p q) (z:zs) = Impl (sustituye p (z:zs)) (sustituye q (z:zs))
 sustituye (Syss p q) (z:zs) = Syss (sustituye p (z:zs)) (sustituye q (z:zs))
 
 
-
-
 -- | Funcion que dada una proposición y estados, evalua la proposicion
 -- asignando el estado que corresponda. Si no existe una variable,
 -- maneja el error.
 interp :: Prop -> Estados -> Bool
-interp (Var _) [] = error "Insuficientes Var"
+interp (Var _) [] = error "Insuficientes Valores"
 interp (Var p) (z:zs) = if fst z == p then snd z else interp (Var p) zs
 interp (Neg p) z = not (interp p z)
 interp (Conj p q) z = interp p z && interp q z
-interp (Disy p q) z = not (not (interp p z) && not (interp q z))
+interp (Disy p q) z = interp p z || interp q z
 interp (Impl p q) z = not (interp p z) || interp q z
 interp (Syss p q) z = interp p z == interp q z
 
+
 -- | Funcion que dada una proposicion, dice True si es tautologia,
 -- False en otro caso.
+-- Tabla -> [Renglon]
+-- renglon -> (Estados, bool)
 esTautologia :: Prop -> Bool
-esTautologia (Var p)    = error "a"
---esTautologia (Neg p)    = --interp p (generaEstados (varList p))
---esTautologia (Conj p q) = --interp (Conj p q) (generaEstados (varList p)++generaEstados(varList q))
---esTautologia (Disy p q) = --interp (Disy p q) (generaEstados (varList p)++generaEstados(varList q))
---esTautologia (Impl p q) = --interp (Impl p q) (generaEstados (varList p)++generaEstados(varList q))
---esTautologia (Syss p q) = --interp (Syss p q) (generaEstados (varList p)++generaEstados(varList q))
--- idea
--- interpretar -> [t,f,t,f...] = lis
--- if (lis =t) return true
-  -- else false
-
+esTautologia p = compruebaV valores
+  where
+    valores = [snd x | x <- renglones]
+    renglones = tablaDeVerdad p
 
 -- | Funcion que dada una proposicion, dice True si es una
 -- contradiccion, False en otro caso.
 esContradiccion :: Prop -> Bool
-esContradiccion (Var p) = error ""
---esContradiccion (Neg p)    = 
---esContradiccion (Conj p q) = 
---esContradiccion (Disy p q) = 
---esContradiccion (Impl p q) = 
---esContradiccion (Syss p q) = 
+esContradiccion p = compruebaF valores
+  where
+    valores = [snd x | x<- renglones]
+    renglones = tablaDeVerdad p
 
 
 
 -- | Funcion que dada una proposicion, dice True si es satisfacible,
--- False en otro caso.
+-- False en otro caso. Por definción satisfacible es solo que no sea contradicción
 esSatisfacible :: Prop -> Bool
-esSatisfacible = error "D:"
+esSatisfacible p = not (esContradiccion p)
+
 
 -- | Funcion que dada una proposicion, devuelve su tabla de verdad.
-
 tablaDeVerdad :: Prop -> Tabla
 tablaDeVerdad p = [(edos, interp p edos) | edos <- mods]
-  where 
+  where
     mods = estados p
 
 
 -- | Funcion que devuelve la lista de todos los modelos posibles para
 -- una proposición.
 modelos :: Prop -> [Estados]
-modelos = error "D:"
-
+modelos p = filter (interp p) [fst x | x <-  tablaDeVerdad p]
+-- tabla = [renglones]
+-- renglon = (Estados, bool)
+-- Estados = [Estado]
+-- Estado = (Name, Bool)
 
 --------------------------------------------------------------------------------
 --------                           AUXILIARES                           --------
@@ -207,7 +205,7 @@ conjPoten (x:xs) = map (x: ) pt `union` pt
 -- Nos da todos los estados de una Proposición
 estados :: Prop -> [Estados]
 estados p = map sort $ zipWith (++) true' false'
-  where 
+  where
     true = conjPoten $ varList p
     true' = map (\x -> (map (\y -> (y, True)) x)) true
     false = reverse $ conjPoten $ varList p
@@ -223,11 +221,6 @@ compruebaV (x:xs) =  x && compruebaV xs
 compruebaF:: [Bool] -> Bool
 compruebaF [] = True
 compruebaF (x:xs) = not x && compruebaF xs
-
-
-esta :: Eq a => a -> [a] -> Bool
-esta _ [] = False
-esta y (x:xs) = y==x || esta y xs
 
 
 --------------------------------------------------------------------------------
@@ -259,6 +252,7 @@ negacion1 = negacion imp
 negacion2 = negacion (Neg imp)
 -- Regresa: Impl (Var "P") (Conj (Var "Q") (Neg (Var "R")))
 
+
 sustituye1 = sustituye imp [("P", "A"), ("Q", "B"), ("R", "C")]
 -- Regresa: Impl (Var "A") (Conj (Var "B") (Neg (Var "C")))
 
@@ -270,3 +264,36 @@ interp2 = interp imp [("Q",True), ("P",True)]
 interp3 = interp imp [("Q",True), ("P",True), ("R",True)]
 -- Regresa: False
 
+tauto1 = esTautologia imp
+-- Regresa: False
+
+contra1 = esContradiccion imp
+
+-- Ejemplos de tautologia y contradicción
+t :: Prop
+t = Disy (Var "P") (Neg (Var "P")) -- P v ¬P
+
+c :: Prop
+c = Neg (Disy (Var "P") (Neg (Var "P")))
+
+t1 = esTautologia t
+-- Regresa: True
+
+c1 = esContradiccion c
+-- Regresa: True
+
+satis = esSatisfacible c
+-- Regresa: False 
+
+tabla = tablaDeVerdad imp
+{- regresa: [([("P",True),("Q",True),("R",True)],False),([("P",True),("Q",True),("R",False)],True),
+          ([("P",True),("Q",False),("R",True)],False),([("P",True),("Q",False),("R",False)],False),
+          ([("P",False),("Q",True),("R",True)],True),([("P",False),("Q",True),("R",False)],True),
+          ([("P",False),("Q",False),("R",True)],True),([("P",False),("Q",False),("R",False)],True)] -}
+
+modelo = modelos imp
+{- Regresa: [[("P",True),("Q",True),("R",False)],
+            [("P",False),("Q",True),("R",True)],
+            [("P",False),("Q",True),("R",False)],
+            [("P",False),("Q",False),("R",True)],
+            [("P",False),("Q",False),("R",False)]] -}          
