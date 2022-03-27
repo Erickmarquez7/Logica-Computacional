@@ -182,16 +182,21 @@ esSatisfacible = error "D:"
 -- | Funcion que dada una proposicion, devuelve su tabla de verdad.
 
 tablaDeVerdad :: Prop -> Tabla
-tablaDeVerdad = error "D:"
+tablaDeVerdad p = [(edos, interp p edos) | edos <- mods]
+  where 
+    mods = estados p
 
 
 -- | Funcion que devuelve la lista de todos los modelos posibles para
 -- una proposición.
 modelos :: Prop -> [Estados]
 modelos = error "D:"
+
+
 --------------------------------------------------------------------------------
 --------                           AUXILIARES                           --------
 --------------------------------------------------------------------------------
+
 --función auxiliar para la potencia
 conjPoten :: Eq a => [a] -> [[a]]
 conjPoten []     = [[]]
@@ -199,31 +204,14 @@ conjPoten (x:xs) = map (x: ) pt `union` pt
   where
     pt = conjPoten xs
 
-
---  Mis pobres intentos de obtener los valores xp
-daValor:: Name -> Bool
-daValor p = p /= []
-
-generaEstado :: Name -> Estado
-generaEstado p = (p , daValor p)
-
-generaEstados:: [Name] -> Estados
---generaEstados [] = []
---generaEstados (_:_:_) = []
---generaEstados [n] = [(n,b) | b <- daValor n] 
-
-generaEstados p = [(a,True) | a <-p]
-
---función auxiliar para dar una lista de los posibles Estados de una variable
---type Estado = (Name, Bool) 
---type Estados = [Estado]
---generaEstados:: [Name] -> Estados
---generaEstados [] = []
---generaEstados (x:xs) = [(x,False)]++[(x,True)]++generaEstados xs
-
-
-
-
+-- Nos da todos los estados de una Proposición
+estados :: Prop -> [Estados]
+estados p = map sort $ zipWith (++) true' false'
+  where 
+    true = conjPoten $ varList p
+    true' = map (\x -> (map (\y -> (y, True)) x)) true
+    false = reverse $ conjPoten $ varList p
+    false' = map (\x -> (map (\y -> (y, False)) x)) false
 
 
 -- Nos dice si todos los elementos de los estados son verdaderos
