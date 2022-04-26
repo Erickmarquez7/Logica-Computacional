@@ -24,16 +24,14 @@ myFilter f [] = []
 myFilter f (x:xs) = if f x then x:myFilter f xs else myFilter f xs
 
 
---auxlistas :: [Double] -> Double -> [Double]
---auxlistas x y = myMap (+ y) x
+auxlistas :: [Double] -> Double -> [Double]
+auxlistas x y =  myMap (*3) (myMap (+ y) x)
+
 
 -- 1 Fn que dada una lista de listas le sume un elemento y luego lo multiplica por pi
 listas :: [[Double]] -> Double -> [[Double]]
-listas = error "f"
---listas [[x]] y = auxlistas [x] y
---listas x y = myMap (\x -> myMap (+y) *8.07 )
---listas x y = myMap (+ y) x
---listas x y = myMap (*3.14) (myMap (+ y) x 
+listas x y = myMap (\x -> (auxlistas x y)) x') x'
+    where x' = x --cada elemento de la lista
 
 -- 2 Dada una lista de cadenas agrega el prefijo "pro" y sujifo "azo"
 cadenas :: [[Char]] -> [[Char]]
@@ -56,6 +54,10 @@ filtra2 x = myFilter (\a -> a /= 'a' && a /= 'e' && a /= 'i' && a /= 'o' && a /=
 -- Prueba de la 1
 plistas :: [[Double]]
 plistas = listas [[1.0,2.0,3.0], [4.0,5.0,6.0], [7.0,8.0,9.0]] 2
+prlistas = listas [[1.0]] 2
+
+aux :: [Double]
+aux = auxlistas [1,2,3,4,5,6,7] 8 
 
 
 -- Prueba de la 2

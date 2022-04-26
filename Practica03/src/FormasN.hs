@@ -79,4 +79,5 @@ interNeg = error "f"
 -- p v q
 --interNeg (Neg (Var p)) = Var p
 
-
+normalizar :: Prop -> Prop
+normalizar = error "f"
