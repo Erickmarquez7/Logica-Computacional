@@ -1,7 +1,7 @@
 Integrantes:
 Bernal Márquez Erick        317042522
 Deloya Andrade Ana Valeria  317277582
-Perez    Natalia            ?
+Perez Romero Natalia Abigail 318144265
 
 Desarrollo:
 Practica 3
