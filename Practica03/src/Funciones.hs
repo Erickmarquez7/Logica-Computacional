@@ -30,7 +30,7 @@ auxlistas x y =  myMap (*3) (myMap (+ y) x)
 
 -- 1 Fn que dada una lista de listas le sume un elemento y luego lo multiplica por pi
 listas :: [[Double]] -> Double -> [[Double]]
-listas x y = myMap (\x -> (auxlistas x y)) x') x'
+listas x y = myMap (\x -> (auxlistas x y)) x'
     where x' = x --cada elemento de la lista
 
 -- 2 Dada una lista de cadenas agrega el prefijo "pro" y sujifo "azo"

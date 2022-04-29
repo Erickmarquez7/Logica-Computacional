@@ -18,15 +18,13 @@ import LogPro
 
 
 formaNormalNegativa :: Prop -> Prop
-formaNormalNegativa p = p
+formaNormalNegativa p = eliminaNeg(equivalencia p)
 
 formaNormalConjuntiva :: Prop -> Prop
-formaNormalConjuntiva p = p
+formaNormalConjuntiva p = interDisy (formaNormalNegativa p)
 
 formaNormalDisyuntiva :: Prop -> Prop
-formaNormalDisyuntiva p = p
-
-
+formaNormalDisyuntiva p = interConj (formaNormalNegativa p)
 
 
 ------------------------------ Auxiliares -------------------------
@@ -74,10 +72,84 @@ interDisy (Conj p q) = Conj (interDisy p) (interDisy q)
 interDisy p = p
 
 
-interNeg :: Prop -> Prop
-interNeg = error "f"
--- p v q
---interNeg (Neg (Var p)) = Var p
 
-normalizar :: Prop -> Prop
-normalizar = error "f"
+----------------------------- Ejemplos -----------------------------
+
+-- Ejemplos de Forma Normal Disyuntiva
+ejemplo1Disy::Prop
+-- ¬(p -> q) v ¬(q -> p) 
+ejemplo1Disy =  Disy ( Neg (Impl (Var "P") (Var "Q"))) (Neg (Impl (Var "Q") (Var "P")))
+
+-- ¬(p -> q) v ¬(q -> p) 
+-- ¬(¬p v q) v ¬(¬q v p) 
+-- (¬¬p v ¬q) v (¬¬q v ¬p) 
+-- (p ^ ¬q) v (q v ¬p) 
+-- Disy (Conj (Var "P") (Neg (Var "Q"))) (Conj (Var "Q") (Neg (Var "P")))
+ejemplo1Disy' = formaNormalDisyuntiva ejemplo1Disy
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------
+
+-- Ejemplos de Forma Normal Conjuntiva
+
+ejemplo1Conj :: Prop
+-- ¬(p ^ q) ^ ¬(r v q)
+ejemplo1Conj = Conj (Neg(Conj((Var "P")) ((Var "Q")))) ((Neg(Disy((Var "R")) ((Var "Q")))))
+
+-- ¬(p ^ q) ^ ¬(r v q)
+-- (¬p ^ ¬q) ^ (¬r ^ ¬q)
+-- Conj (Disy (Neg (Var "P")) (Neg (Var "Q"))) (Conj (Neg (Var "R")) (Neg (Var "Q")))
+ejemplo1Conj' = formaNormalConjuntiva ejemplo1Conj
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------
+
+-- Ejemplos de Forma Normal Negativa
+
+ejemplo1Neg :: Prop
+-- ¬(p v (r ^ q))
+ejemplo1Neg = Neg(Disy (Var "P") (Conj (Var "R") (Var "Q")))
+
+-- (¬p ^ ¬(r ^ q))
+-- (¬p ^ (¬r v ¬q))
+-- Conj (Neg (Var "P")) (Disy (Neg (Var "R")) (Neg (Var "Q")))
+ejemplo1Neg' = formaNormalNegativa ejemplo1Neg
+
+
+ejemplo2Neg :: Prop
+-- ¬((p ^ q) => (r ^ s))
+ejemplo2Neg = Neg(Impl (Conj (Var "P")(Var "Q"))  (Conj (Var "R")(Var "S")))
+
+
+-- (¬(p ^ q) v (r ^ s))
+-- ((¬p v ¬q) v (r ^ s))
+-- ((p ^ q) ^ (¬r v ¬s))
+-- Conj (Conj (Var "P") (Var "Q")) (Disy (Neg (Var "R")) (Neg (Var "S")))
+ejemplo2Neg' = formaNormalNegativa ejemplo2Neg
+
+
+
+
+
+
+
+
+
+

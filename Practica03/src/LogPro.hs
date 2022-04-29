@@ -108,6 +108,30 @@ equivalencia (Impl p q) = Disy (Neg (equivalencia p)) (equivalencia q) -- ¬P v 
 equivalencia (Syss p q) = Conj (Disy (equivalencia p) (equivalencia q)) (Disy (Neg ( equivalencia q)) (Neg (equivalencia p)))
 
 
+eliminaNeg :: Prop -> Prop
+--eliminaNeg (PNeg (PTrue)) = PFalse
+--eliminaNeg (PNeg (PFalse)) = PTrue
+eliminaNeg (Neg (Var p)) = (Neg (Var p))
+eliminaNeg (Neg (Neg p)) = eliminaNeg p
+eliminaNeg (Neg (Disy p q)) = eliminaNeg (deMorgan (Neg (Disy p q)))
+eliminaNeg (Neg (Conj p q)) = eliminaNeg (deMorgan (Neg (Conj p q)))
+eliminaNeg (Neg (Impl p q)) = eliminaNeg (Conj p (Neg q))
+eliminaNeg (Neg (Syss p q)) = eliminaNeg (Syss (Neg p)(q))
+--eliminaNeg (PTrue) = PTrue
+--eliminaNeg (PFalse) = PFalse
+eliminaNeg (Var p) = Var p
+--eliminaNeg (Neg p) = eliminaNeg (Neg (eliminaNeg p))
+eliminaNeg (Disy p q) = Disy (eliminaNeg p) (eliminaNeg q)
+eliminaNeg (Conj p q) = Conj (eliminaNeg p) (eliminaNeg q)
+eliminaNeg (Impl p q) = Impl (eliminaNeg p) (eliminaNeg q)
+eliminaNeg (Syss p q) = Syss (eliminaNeg p) (eliminaNeg q)
+
+deMorgan :: Prop -> Prop
+deMorgan (Neg (Disy a b)) = (Conj (deMorgan(Neg a)) (deMorgan(Neg b)))
+deMorgan (Neg (Conj a b)) = (Disy (deMorgan(Neg a)) (deMorgan(Neg b)))
+deMorgan p = p
+
+
 -- | Funcion que niega una proposicion
 negacion :: Prop -> Prop
 negacion (Var p)    = Neg (Var p)
@@ -244,6 +268,9 @@ equivalencia2 = equivalencia (Syss imp imp)
 -- (Var "R"))))) (Disy (Neg (Var "P")) (Conj (Var "Q") (Neg (Var
 -- "R"))))) (Disy (Neg (Disy (Neg (Var "P")) (Conj (Var "Q") (Neg (Var
 -- "R"))))) (Disy (Neg (Var "P")) (Conj (Var "Q") (Neg (Var "R")))))
+
+prueba = Neg (Conj (Neg (Var "P")) (Neg (Var "Q")) )
+pruebaEquiv = eliminaNeg prueba
 
 negacion1 = negacion imp
 -- Regresa: Conj (Var "P")  (Disy (Neg (Var "Q")) (Var "R"))
