@@ -87,15 +87,13 @@ ejemplo1Disy =  Disy ( Neg (Impl (Var "P") (Var "Q"))) (Neg (Impl (Var "Q") (Var
 -- Disy (Conj (Var "P") (Neg (Var "Q"))) (Conj (Var "Q") (Neg (Var "P")))
 ejemplo1Disy' = formaNormalDisyuntiva ejemplo1Disy
 
-
-
-
-
-
-
-
-
-
+-- p v (¬q -> p) 
+ejemplo2Disy =  Disy (Var "P") (Impl (Neg (Var "Q")) (Var "P"))
+ejemplo2Disy' = formaNormalDisyuntiva ejemplo2Disy
+-- p v (¬q -> p) 
+-- p v (¬¬q v p)
+--  p v (q v p)
+-- Disy (Var "P") (Disy (Var "Q") (Var "P"))
 
 
 --------------------------------------------------------------------
@@ -112,11 +110,14 @@ ejemplo1Conj = Conj (Neg(Conj((Var "P")) ((Var "Q")))) ((Neg(Disy((Var "R")) ((V
 ejemplo1Conj' = formaNormalConjuntiva ejemplo1Conj
 
 
+-- ¬p ^ (p -> q)
+ejemplo2Conj = Conj (Neg (Var "P")) (Impl (Var "P") (Var "Q"))
 
-
-
-
-
+-- ¬(p ^ q) ^ ¬(r v q)
+-- (¬p v ¬q) ^ (¬r ^ ¬q)
+-- ¬p ^ (¬p v q)
+-- Conj (Neg (Var "P")) (Disy (Neg (Var "P")) (Var "Q"))
+ejemplo2Conj' = formaNormalConjuntiva ejemplo2Conj
 
 
 --------------------------------------------------------------------

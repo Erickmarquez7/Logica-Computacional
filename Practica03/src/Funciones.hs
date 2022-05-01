@@ -51,6 +51,12 @@ filtra2 x = myFilter (\a -> a /= 'a' && a /= 'e' && a /= 'i' && a /= 'o' && a /=
 
 
 --------------------------------- Pruebas -------------------------------
+-- Prueba de myMap
+x = [1,2,3,4]
+x' = myMap (*2) x -- [2,4,6,8]
+-- Prueba de filter
+fx = myFilter (>4) (x++x') --[6,8]
+
 -- Prueba de la 1
 plistas :: [[Double]]
 plistas = listas [[1.0,2.0,3.0], [4.0,5.0,6.0], [7.0,8.0,9.0]] 2
