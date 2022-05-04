@@ -27,39 +27,75 @@ type Sustitucion = [(Variable, Termino)]
 esVariable :: Termino -> Bool
 esVariable (V n) = True
 esVariable (T n []) = False
---esVariable = error "D:"
+
 
 -- Función que dado un término, regresa su lista de variables.
 variables :: Termino -> [Variable]
-variables (V n) = []
-variables (T n l) = l `union` variables (T n l)
--- c cicla, falta el caso base gg
+variables (V n) = [V n]
+variables (T n []) = []
+variables (T n (x:xs)) = variables x `union` variables (T n xs)
+
 
 -- Función que regresa la lista de variables dada una lista de términos.
 variablesEnLista :: [Termino] -> [Variable]
-variablesEnLista = error "D:"
+variablesEnLista [] = []
+variablesEnLista (x:xs) = variables x `union` variablesEnLista xs   
 
 
 -- Función que representa a la sustitución identidad.
+-- type Sustitucion = [(Variable, Termino)]
 epsilon :: Sustitucion
 epsilon = []
 
 
 -- Función que dada una sustitución, obtenemos su dominio.
 dominio :: Sustitucion -> [Variable]
-dominio = error "D:"
+dominio [] = []
+dominio (x:xs) = [fst x] ++ dominio xs
 
 
 -- Función que dada una sustitución y una variable, regresa la
 -- aplicación de la sustitución a la variable.
 aplicaVar :: Sustitucion -> Variable -> Termino
-aplicaVar = error "D:"
+aplicaVar [] x = x
+aplicaVar (x:xs) v = if  fst x == v then snd x else aplicaVar xs v --T "p" []-- aplicaVar (xs t)
+-- aplicaVar = error "D:"
+{- 
+-- type Sustitucion = [(Variable, Termino)]
 
+-- V n
+s1 = [(z, f [x, y]), (x, a), (x,]
+aplicaVar1 = aplicaVar s1 x
+-- Regresa: a
+
+aplicaVar2 = aplicaVar s1 y
+-- Regresa: y
+
+aplicaVar3 = aplicaVar s1 z
+-- Regresa: f [x, y]
+
+x = V "x"
+y = V "y"
+z = V "z"
+-}
 
 -- Función que dada una sustitución y un término, regresa la
 -- aplicación de la sustitución al término.
+
 aplicaT :: Sustitucion -> Termino -> Termino
-aplicaT = error "D:"
+aplicaT [] x = x
+-- aplicaT s (V n) =  T "p" 
+-- aplicaT [] (T n [])t =
+aplicaT s t = if esVariable(t) then aplicaVar s t else T "p" []
+--aplicaT = error "D:"
+-- V Nombre
+-- | T Nombre [Termino]
+{-
+s1 =               [(z, f [x, y]), (x, a)]
+aplicaT1 = aplicaT          s1          (g [f [x, y],      z])
+--            Regresa:                   g [f [a, y], f [x, y]]
+-}
+
 
 -- Función que regresa la sustitución obtenida, eliminando los pares
 -- cuyos elementos son iguales.
@@ -126,6 +162,7 @@ ejemplo2 = unificaListas [y1] [y2]
 y1 = p [x, f [y]]
 y2 = p [g [y, a], f [b]]
 
+
 -- ejemplos funciones
 
 esVariable1 = esVariable x
@@ -138,7 +175,7 @@ variables1 = variables (g [f [x,y], z])
 -- Regresa: [x,y,z]
 
 variablesEnLista1 = variablesEnLista [f [x,y], g [f [x, y], z]]
--- Regresa: [x,y,z]
+-- Regresa: [x,y,z], 
 
 dominio1 = dominio s1
 -- Regresa: [x,z]
