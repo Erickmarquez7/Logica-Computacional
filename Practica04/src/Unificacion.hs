@@ -25,26 +25,36 @@ type Sustitucion = [(Variable, Termino)]
 
 -- Funció que nos dice si un un termino es una variable.
 esVariable :: Termino -> Bool
+esVariable (V n) = True
+esVariable (T n []) = False
 --esVariable = error "D:"
 
 -- Función que dado un término, regresa su lista de variables.
 variables :: Termino -> [Variable]
-variables = error "D:"
+variables (V n) = []
+variables (T n l) = l `union` variables (T n l)
+-- c cicla, falta el caso base gg
+
 -- Función que regresa la lista de variables dada una lista de términos.
 variablesEnLista :: [Termino] -> [Variable]
 variablesEnLista = error "D:"
+
+
 -- Función que representa a la sustitución identidad.
 epsilon :: Sustitucion
 epsilon = []
+
 
 -- Función que dada una sustitución, obtenemos su dominio.
 dominio :: Sustitucion -> [Variable]
 dominio = error "D:"
 
+
 -- Función que dada una sustitución y una variable, regresa la
 -- aplicación de la sustitución a la variable.
 aplicaVar :: Sustitucion -> Variable -> Termino
 aplicaVar = error "D:"
+
 
 -- Función que dada una sustitución y un término, regresa la
 -- aplicación de la sustitución al término.
@@ -56,15 +66,18 @@ aplicaT = error "D:"
 reduce :: Sustitucion -> Sustitucion
 reduce = error "D:"
 
+
 -- Función que dadas dos sustituciones, regresa su composición.
 composicion :: Sustitucion -> Sustitucion -> Sustitucion
 composicion = error "D:"
+
 
 -- Función que dados dos términos, regresa la lista formada por el
 -- unificador más general de ambos términos. Si no son unificables,
 -- regresa la lista vacía.
 unifica :: Termino -> Termino -> [Sustitucion]
 unifica = error "D:"
+
 
 -- Función que regresa la lista formada por el unificador más general
 -- de las listas de términos.
