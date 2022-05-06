@@ -84,15 +84,23 @@ z = V "z"
 
 aplicaT :: Sustitucion -> Termino -> Termino
 aplicaT [] x = x
--- aplicaT s (V n) =  T "p" 
--- aplicaT [] (T n [])t =
+aplicaT s (V n) = aplicaVar s (V n)
+aplicaT s (T n []) = (V n)
+aplicaT (y:ys) (T n (x:xs)) = if fst y == x then (T n (fst y:xs)) else aplicaT ys (T n (x:xs))
+{- 
 aplicaT s t = if esVariable(t) then aplicaVar s t else T "p" []
 --aplicaT = error "D:"
 -- V Nombre
 -- | T Nombre [Termino]
+
+--variables (V n) = [V n]
+variables (T n []) = []
+variables (T n (x:xs)) = variables x `union` variables (T n xs)
+-}
+
 {-
 s1 =               [(z, f [x, y]), (x, a)]
-aplicaT1 = aplicaT          s1          (g [f [x, y],      z])
+aplicaT1 = aplicaT      s1       (g [f [x, y],      z])
 --            Regresa:                   g [f [a, y], f [x, y]]
 -}
 
