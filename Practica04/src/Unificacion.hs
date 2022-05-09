@@ -23,11 +23,11 @@ type Variable = Termino
 -- Una sustitución es un par formado por una variable y un término.
 type Sustitucion = [(Variable, Termino)]
 
--- Funció que nos dice si un un termino es una variable.
+-- Función que nos dice si un un termino es una variable.
 esVariable :: Termino -> Bool
 esVariable (V n) = True
-esVariable (T n []) = False
-
+esVariable (T n l) = False
+--esVariable (T n (x:xs)) = False
 
 -- Función que dado un término, regresa su lista de variables.
 variables :: Termino -> [Variable]
@@ -59,25 +59,7 @@ dominio (x:xs) = [fst x] ++ dominio xs
 aplicaVar :: Sustitucion -> Variable -> Termino
 aplicaVar [] x = x
 aplicaVar (x:xs) v = if  fst x == v then snd x else aplicaVar xs v --T "p" []-- aplicaVar (xs t)
--- aplicaVar = error "D:"
-{- 
--- type Sustitucion = [(Variable, Termino)]
 
--- V n
-s1 = [(z, f [x, y]), (x, a), (x,]
-aplicaVar1 = aplicaVar s1 x
--- Regresa: a
-
-aplicaVar2 = aplicaVar s1 y
--- Regresa: y
-
-aplicaVar3 = aplicaVar s1 z
--- Regresa: f [x, y]
-
-x = V "x"
-y = V "y"
-z = V "z"
--}
 
 -- Función que dada una sustitución y un término, regresa la
 -- aplicación de la sustitución al término.
@@ -108,30 +90,77 @@ aplicaT1 = aplicaT      s1       (g [f [x, y],      z])
 -- Función que regresa la sustitución obtenida, eliminando los pares
 -- cuyos elementos son iguales.
 reduce :: Sustitucion -> Sustitucion
-reduce = error "D:"
--- De la lista elimina expresiones tipo (x,x)
--- reduce1 = reduce [(x,a), (y,y), (z, f [x,y])]
--- Regresa: [(x,a), (z, f [x,y])]
+reduce [] = []
+reduce (x:xs) = if reduce' (fst x) (snd x) then reduce xs else x:reduce xs
 
+reduce' :: Variable -> Termino -> Bool
+reduce' (V x) (T y l) = x == y
+reduce' (V x) (V y) = x == y
 
 
 -- Función que dadas dos sustituciones, regresa su composición.
+-- type Sustitucion = [(Variable, Termino)]
 composicion :: Sustitucion -> Sustitucion -> Sustitucion
 composicion = error "D:"
+--  aplicaT :: Sustitucion -> Termino -> Termino
+-- composicion l (y:ys) = domi (reduce (fst y, aplicaT l (snd y)))
+
 -- La primer parte tenemos la sustitutcion s1 y s2
 -- tomamos los elementos de s1 y lo aplicamos a s2, aunque este cause casos como (x,x) ya sabemos como quitarlos
 -- Lo anterior lo hacemos con aplicaT
--- Luego tomar las sustitutciones de s2 de la forma (x,t) (cada elemento de la lista en su patron x:xs, fst x)
+-- Luego tomar las sustituciones de s2 de la forma (x,t) (cada elemento de la lista en 
+-- su patron x:xs, fst x)
 -- y verificar que x no esté en el dominio de las sustituciones de s1
 -- para eso tenemos la funcion de dominio
 -- Que segun está en la hora 1:13 de la clase 9
 
 
+
 -- Función que dados dos términos, regresa la lista formada por el
 -- unificador más general de ambos términos. Si no son unificables,
 -- regresa la lista vacía.
+
+-- type Sustitucion = [(Variable, Termino)]
 unifica :: Termino -> Termino -> [Sustitucion]
 unifica = error "D:"
+-- unifica (V x) (V y) =  if x == y then [epsilon] else (V x, V y)
+-- unifica (V x) t2    =  variables t2 
+-- unifica (V x) (V y) = if x == y then nada else (V x) (V y), regresar epsilon
+-- unifica (V x) t2 = x \not in (sacamos variables de t2), si se cumple agregamos a (x, t2)
+-- unifica t1 (V y) = igual k arriba
+-- unifica t1 t2 = unificar las lista xd pero solo si se cumple una condicion: que se llamen igual
+
+-- (T f xs) (T g ys) = si f == g then unificalista
+
+
+-- tenemos que recibir dos terminos, 4 casos: var, var; var, termino; termino, var; temrino, termino
+-- lo primero es si recibimos las misma variables, si son las mismas no tiene caso umg
+-- si no son las mismas entonces la susti que podemos dar es que cada vez que encontremos la primer var
+-- ponemos la segunda la car
+
+-- cuando tenemos que ambos son var
+
+{-
+a = T "a" []
+x = V "x"
+unifica1 = unifica a a
+-- Regresa: [[]]
+
+unifica2 = unifica x a
+-- Regresa: [[(x, a)]]
+
+unifica3 = unifica x (f[y])
+-- Regresa: [[(x, f[y])]]
+
+unifica4 = unifica x (f[x])
+-- Regresa: []
+
+unifica5 = unifica (f[y]) x
+-- Regresa: [[(x, f[y])]]
+
+unifica6 = unifica (f[x]) x
+-- Regresa: []
+-}
 
 
 -- Función que regresa la lista formada por el unificador más general
