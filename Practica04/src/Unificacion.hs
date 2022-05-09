@@ -109,11 +109,22 @@ aplicaT1 = aplicaT      s1       (g [f [x, y],      z])
 -- cuyos elementos son iguales.
 reduce :: Sustitucion -> Sustitucion
 reduce = error "D:"
+-- De la lista elimina expresiones tipo (x,x)
+-- reduce1 = reduce [(x,a), (y,y), (z, f [x,y])]
+-- Regresa: [(x,a), (z, f [x,y])]
+
 
 
 -- Función que dadas dos sustituciones, regresa su composición.
 composicion :: Sustitucion -> Sustitucion -> Sustitucion
 composicion = error "D:"
+-- La primer parte tenemos la sustitutcion s1 y s2
+-- tomamos los elementos de s1 y lo aplicamos a s2, aunque este cause casos como (x,x) ya sabemos como quitarlos
+-- Lo anterior lo hacemos con aplicaT
+-- Luego tomar las sustitutciones de s2 de la forma (x,t) (cada elemento de la lista en su patron x:xs, fst x)
+-- y verificar que x no esté en el dominio de las sustituciones de s1
+-- para eso tenemos la funcion de dominio
+-- Que segun está en la hora 1:13 de la clase 9
 
 
 -- Función que dados dos términos, regresa la lista formada por el
