@@ -4,4 +4,11 @@ Deloya Andrade Ana Valeria   317277582
 Perez Romero Natalia Abigail 318144265
 
 Desarrollo:
+La practica se Desarrolló como en la anterior, al menos dos personas se juntaban
+para poder discutir diferentes ideas, implementanciones, etc. Una vez que que terminabamos
+nos avisabamos entre todos de los cambios hechos.
+Las primeras 5 funciones eran algo sencillas, pues solo era "sacar" o "poner" alguna
+variable o termino de acuerdo a la caza de patrones.
+Pero las otras 5 no tanto, pues teniamos que usar funciones ya definidas o bien hacer auxiliares
+para poder implementarlas lo cual lo hacia más confuso.
 
