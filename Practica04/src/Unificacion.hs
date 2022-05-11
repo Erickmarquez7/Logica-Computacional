@@ -50,8 +50,9 @@ epsilon = []
 
 -- Función que dada una sustitución, obtenemos su dominio.
 dominio :: Sustitucion -> [Variable]
-dominio [] = []
-dominio (x:xs) = [fst x] ++ dominio xs
+dominio = map fst
+--dominio [] = []
+-- dominio (x:xs) = [fst x] ++ dominio xs
 
 
 -- Función que dada una sustitución y una variable, regresa la
@@ -63,34 +64,12 @@ aplicaVar (x:xs) v = if  fst x == v then snd x else aplicaVar xs v --T "p" []-- 
 
 -- Función que dada una sustitución y un término, regresa la
 -- aplicación de la sustitución al término.
--- Ter = V n | T n [Ter]
+-- Ter = V n | T n [Ter] -|- x, y, x ; f(x), g(y)
 -- type Sustitucion = [(Variable, Termino)]
 aplicaT :: Sustitucion -> Termino -> Termino
 aplicaT [] x = x
 aplicaT s (V n) = aplicaVar s (V n)
-aplicaT (y:ys) (T n (x:xs)) = T n ([aplicaT s x]++[aplicaT s x])  
-
---aplicaT s (T n (x:xs)) = T n ([aplicaT s x]++[aplicaT s x])
---aplicaT s (T n (x:xs)) = (T n [(aplicaT s x ++ aplicaT s xs)])
---aplicaT (y:ys) (T n (x:xs)) = if fst y == x then (T n (fst y:xs)) else T n (y:ys)
---if fst y == x then (T n (aplicaT fst y:xs)) else aplicaT ys (T n (x:xs))
-{- 
-
-aplicaT s t = if esVariable(t) then aplicaVar s t else T "p" []
---aplicaT = error "D:"
--- V Nombre
--- | T Nombre [Termino]
-
---variables (V n) = [V n]
-variables (T n []) = []
-variables (T n (x:xs)) = variables x `union` variables (T n xs)
--}
-
-{-
-s1 =             [(z, f [x, y]), (x, a)]
-aplicaT1 = aplicaT             s1       (g [f [x, y],      z])
---            Regresa:                   g [f [a, y], f [x, y]]
--}
+aplicaT s (T n xs) = T n [aplicaT s x | x <- xs]
 
 
 -- Función que regresa la sustitución obtenida, eliminando los pares
@@ -107,7 +86,11 @@ reduce' (V x) (V y) = x == y
 -- Función que dadas dos sustituciones, regresa su composición.
 -- type Sustitucion = [(Variable, Termino)]
 composicion :: Sustitucion -> Sustitucion -> Sustitucion
-composicion = error "D:"
+composicion xs ys = 
+  (reduce [ ((fst x),(aplicaT ys (snd x))) | x <-  xs ]) ++ 
+  [ a | a <- ys, (fst a) `notElem` (dominio xs) ]
+
+
 --  aplicaT :: Sustitucion -> Termino -> Termino
 -- composicion l (y:ys) = domi (reduce (fst y, aplicaT l (snd y)))
 
@@ -149,7 +132,7 @@ unifica = error "D:"
 a = T "a" []
 x = V "x"
 unifica1 = unifica a a
--- Regresa: [[]]
+-- Regresa: [[]]  
 
 unifica2 = unifica x a
 -- Regresa: [[(x, a)]]
