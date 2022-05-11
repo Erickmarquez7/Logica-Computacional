@@ -63,13 +63,19 @@ aplicaVar (x:xs) v = if  fst x == v then snd x else aplicaVar xs v --T "p" []-- 
 
 -- Función que dada una sustitución y un término, regresa la
 -- aplicación de la sustitución al término.
-
+-- Ter = V n | T n [Ter]
+-- type Sustitucion = [(Variable, Termino)]
 aplicaT :: Sustitucion -> Termino -> Termino
 aplicaT [] x = x
 aplicaT s (V n) = aplicaVar s (V n)
-aplicaT s (T n []) = (V n)
-aplicaT (y:ys) (T n (x:xs)) = if fst y == x then (T n (fst y:xs)) else aplicaT ys (T n (x:xs))
+aplicaT (y:ys) (T n (x:xs)) = T n ([aplicaT s x]++[aplicaT s x])  
+
+--aplicaT s (T n (x:xs)) = T n ([aplicaT s x]++[aplicaT s x])
+--aplicaT s (T n (x:xs)) = (T n [(aplicaT s x ++ aplicaT s xs)])
+--aplicaT (y:ys) (T n (x:xs)) = if fst y == x then (T n (fst y:xs)) else T n (y:ys)
+--if fst y == x then (T n (aplicaT fst y:xs)) else aplicaT ys (T n (x:xs))
 {- 
+
 aplicaT s t = if esVariable(t) then aplicaVar s t else T "p" []
 --aplicaT = error "D:"
 -- V Nombre
@@ -81,8 +87,8 @@ variables (T n (x:xs)) = variables x `union` variables (T n xs)
 -}
 
 {-
-s1 =               [(z, f [x, y]), (x, a)]
-aplicaT1 = aplicaT      s1       (g [f [x, y],      z])
+s1 =             [(z, f [x, y]), (x, a)]
+aplicaT1 = aplicaT             s1       (g [f [x, y],      z])
 --            Regresa:                   g [f [a, y], f [x, y]]
 -}
 
@@ -132,11 +138,10 @@ unifica = error "D:"
 
 -- (T f xs) (T g ys) = si f == g then unificalista
 
+{-  
 
--- tenemos que recibir dos terminos, 4 casos: var, var; var, termino; termino, var; temrino, termino
--- lo primero es si recibimos las misma variables, si son las mismas no tiene caso umg
--- si no son las mismas entonces la susti que podemos dar es que cada vez que encontremos la primer var
--- ponemos la segunda la car
+
+-}
 
 -- cuando tenemos que ambos son var
 
@@ -167,6 +172,21 @@ unifica6 = unifica (f[x]) x
 -- de las listas de términos.
 unificaListas :: [Termino] -> [Termino] -> [Sustitucion]
 unificaListas = error "D:"
+{-  si recibimos ambas listas podemos hacer una caza de patrones de mabas listas 
+si ambas son vacio entonces regresa la identidad
+si al menos una es vacia entonces no se puede crear un umg y regresamos el vacio 
+OJAZO: VACIO NO ES LA IDENTIDAD 
+
+El caso interesante es cuando no son vaacias, HINTAZO xd siempre regresamos una lista de sustituciones,
+las sustituciones son las listas
+
+Entonces hay que componer dos listas, la primera es la unificacion de las cabezas de los terminos,
+literalmente lo que recibimos son las listas, entonces vamos uno a uno unificando.
+La segunda parte de la composicion es una unificacion de listas ¿Cuales? pues dos aplicaciones de la
+lista anterior que creamos (La de la composicion) con la cabeza de cada una de las listas de las que 
+nos pasan, hay que tomar todos los temrinos de la lista y a cada uno aplicarles dicha lista
+
+-}
 
 ---------------------------------------------------------------------------------
 --------                             EJEMPLOS                            --------
@@ -223,7 +243,7 @@ variables1 = variables (g [f [x,y], z])
 -- Regresa: [x,y,z]
 
 variablesEnLista1 = variablesEnLista [f [x,y], g [f [x, y], z]]
--- Regresa: [x,y,z], 
+-- Regresa: [x,y,z]
 
 dominio1 = dominio s1
 -- Regresa: [x,z]
@@ -237,6 +257,7 @@ aplicaVar2 = aplicaVar s1 y
 aplicaVar3 = aplicaVar s1 z
 -- Regresa: f [x, y]
 
+-- s1 = [(x, a), (z, f [x, y])]
 aplicaT1 = aplicaT s1 (g [f [x, y], z])
 -- Regresa: g [f [a, y], f [x, y]]
 
