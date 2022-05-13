@@ -118,7 +118,7 @@ unifica (T x l1) (T y l2) = [l | x == y, l <- unificaListas l1 l2]
 
 --[], [1,2]]
 --unifica = error "D:"
--- unifica (V x) (V y) =  if x == y then [epsilon] else (V x, V y)
+-- unifica (V x) (V y) =  if x == y then [epsilon] :relse (V x, V y)
 -- unifica (V x) t2    =  variables t2 
 -- unifica (V x) t2 = x \not in (sacamos variables de t2), si se cumple agregamos a (x, t2)
 -- unifica t1 (V y) = igual k arriba
@@ -255,7 +255,7 @@ unifica6 = unifica (f[x]) x
 
 unificaListas1 = unificaListas [x, f[x], y] [a, y, z]
 -- Regresa: [[(z, f[a]), (y, f[a]), (x, a)]]
--- La nuestra tregresa: [[(x,a)],[(y,f[x])],[(y,z)],[]]
+-- La nuestra regresa: [[(x,a)],[(y,f[x])],[(y,z)],[]]
 
 unificaListas2 = unificaListas [x, f[x]] [y, y]
 -- Regresa: []
