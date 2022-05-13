@@ -111,51 +111,33 @@ composicion xs ys =
 
 -- type Sustitucion = [(Variable, Termino)]
 unifica :: Termino -> Termino -> [Sustitucion]
-unifica = error "D:"
+unifica (V x) (V y) = if x == y then [epsilon] else [[(V x, V y)]]
+unifica (V x) t2    = if ((V x) `notElem` variables t2) then [[(V x,t2)]] else []
+unifica  t1 (V x)   = if ((V x) `notElem` variables t1) then [[(V x,t1)]] else []
+unifica (T x l1) (T y l2) = [l | x == y, l <- unificaListas l1 l2]
+
+--[], [1,2]]
+--unifica = error "D:"
 -- unifica (V x) (V y) =  if x == y then [epsilon] else (V x, V y)
 -- unifica (V x) t2    =  variables t2 
--- unifica (V x) (V y) = if x == y then nada else (V x) (V y), regresar epsilon
 -- unifica (V x) t2 = x \not in (sacamos variables de t2), si se cumple agregamos a (x, t2)
 -- unifica t1 (V y) = igual k arriba
 -- unifica t1 t2 = unificar las lista xd pero solo si se cumple una condicion: que se llamen igual
-
--- (T f xs) (T g ys) = si f == g then unificalista
-
-{-  
-
-
--}
-
--- cuando tenemos que ambos son var
-
-{-
-a = T "a" []
-x = V "x"
-unifica1 = unifica a a
--- Regresa: [[]]  
-
-unifica2 = unifica x a
--- Regresa: [[(x, a)]]
-
-unifica3 = unifica x (f[y])
--- Regresa: [[(x, f[y])]]
-
-unifica4 = unifica x (f[x])
--- Regresa: []
-
-unifica5 = unifica (f[y]) x
--- Regresa: [[(x, f[y])]]
-
-unifica6 = unifica (f[x]) x
--- Regresa: []
--}
 
 
 -- Función que regresa la lista formada por el unificador más general
 -- de las listas de términos.
 unificaListas :: [Termino] -> [Termino] -> [Sustitucion]
-unificaListas = error "D:"
-{-  si recibimos ambas listas podemos hacer una caza de patrones de mabas listas 
+unificaListas [] [] = [epsilon]
+unificaListas l [] = []
+unificaListas [] l = []
+unificaListas (x:xs) (y:ys) = (unifica x y) ++ (unificaListas xs ys)
+
+
+--unificaListas l [] = --regresa vacio, ¿cómo se representa el vacío?
+--unificaListas [] l = --regresa vacio
+
+{-  si recibimos ambas listas podemos hacer una caza de patrones de ambas listas 
 si ambas son vacio entonces regresa la identidad
 si al menos una es vacia entonces no se puede crear un umg y regresamos el vacio 
 OJAZO: VACIO NO ES LA IDENTIDAD 
@@ -273,6 +255,7 @@ unifica6 = unifica (f[x]) x
 
 unificaListas1 = unificaListas [x, f[x], y] [a, y, z]
 -- Regresa: [[(z, f[a]), (y, f[a]), (x, a)]]
+-- La nuestra tregresa: [[(x,a)],[(y,f[x])],[(y,z)],[]]
 
 unificaListas2 = unificaListas [x, f[x]] [y, y]
 -- Regresa: []
