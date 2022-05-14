@@ -64,12 +64,10 @@ aplicaVar (x:xs) v = if  fst x == v then snd x else aplicaVar xs v --T "p" []-- 
 
 -- Función que dada una sustitución y un término, regresa la
 -- aplicación de la sustitución al término.
--- Ter = V n | T n [Ter] -|- x, y, x ; f(x), g(y)
--- type Sustitucion = [(Variable, Termino)]
 aplicaT :: Sustitucion -> Termino -> Termino
 aplicaT [] x = x
 aplicaT s (V n) = aplicaVar s (V n)
-aplicaT s (T n xs) = T n [aplicaT s x | x <- xs]
+aplicaT s (T n xs) = T n [aplicaT s x | x <- xs] --aplicamos la rec a cada uno de los elem de la lista
 
 
 -- Función que regresa la sustitución obtenida, eliminando los pares
@@ -78,6 +76,8 @@ reduce :: Sustitucion -> Sustitucion
 reduce [] = []
 reduce (x:xs) = if reduce' (fst x) (snd x) then reduce xs else x:reduce xs
 
+
+-- Funcion auxiliar para ver si coinciden
 reduce' :: Variable -> Termino -> Bool
 reduce' (V x) (T y l) = x == y
 reduce' (V x) (V y) = x == y
@@ -87,71 +87,34 @@ reduce' (V x) (V y) = x == y
 -- type Sustitucion = [(Variable, Termino)]
 composicion :: Sustitucion -> Sustitucion -> Sustitucion
 composicion xs ys = 
-  (reduce [ ((fst x),(aplicaT ys (snd x))) | x <-  xs ]) ++ 
-  [ a | a <- ys, (fst a) `notElem` (dominio xs) ]
-
-
---  aplicaT :: Sustitucion -> Termino -> Termino
--- composicion l (y:ys) = domi (reduce (fst y, aplicaT l (snd y)))
-
--- La primer parte tenemos la sustitutcion s1 y s2
--- tomamos los elementos de s1 y lo aplicamos a s2, aunque este cause casos como (x,x) ya sabemos como quitarlos
--- Lo anterior lo hacemos con aplicaT
--- Luego tomar las sustituciones de s2 de la forma (x,t) (cada elemento de la lista en 
--- su patron x:xs, fst x)
--- y verificar que x no esté en el dominio de las sustituciones de s1
--- para eso tenemos la funcion de dominio
--- Que segun está en la hora 1:13 de la clase 9
-
+  (reduce [ ((fst x),(aplicaT ys (snd x))) | x <-  xs ]) ++ --tomamos los elementos de s1 y lo aplicamos
+        -- a s2 quitando los repetidos
+  [ a | a <- ys, (fst a) `notElem` (dominio xs) ] --tomar las sustituciones y verificar que no este en el dom
 
 
 -- Función que dados dos términos, regresa la lista formada por el
 -- unificador más general de ambos términos. Si no son unificables,
 -- regresa la lista vacía.
 
--- type Sustitucion = [(Variable, Termino)]
 unifica :: Termino -> Termino -> [Sustitucion]
-unifica (V x) (V y) = if x == y then [epsilon] else [[(V x, V y)]]
-unifica (V x) t2    = if ((V x) `notElem` variables t2) then [[(V x,t2)]] else []
-unifica  t1 (V x)   = if ((V x) `notElem` variables t1) then [[(V x,t1)]] else []
-unifica (T x l1) (T y l2) = [l | x == y, l <- unificaListas l1 l2]
+unifica (V x) (V y) = if x == y then [epsilon] else [[(V x, V y)]] -- Si son iguales no hay susti
+unifica (V x) t2    = if ((V x) `notElem` variables t2) then [[(V x,t2)]] else [] --si no esta en las var aplicamos la susti
+unifica  t1 (V x)   = if ((V x) `notElem` variables t1) then [[(V x,t1)]] else [] -- mismo caso
+unifica (T x l1) (T y l2) = [l | x == y, l <- unificaListas l1 l2] -- unificamos pero solo si tienen el mismo nombre
 
---[], [1,2]]
---unifica = error "D:"
--- unifica (V x) (V y) =  if x == y then [epsilon] :relse (V x, V y)
--- unifica (V x) t2    =  variables t2 
--- unifica (V x) t2 = x \not in (sacamos variables de t2), si se cumple agregamos a (x, t2)
--- unifica t1 (V y) = igual k arriba
--- unifica t1 t2 = unificar las lista xd pero solo si se cumple una condicion: que se llamen igual
 
 
 -- Función que regresa la lista formada por el unificador más general
 -- de las listas de términos.
 unificaListas :: [Termino] -> [Termino] -> [Sustitucion]
-unificaListas [] [] = [epsilon]
-unificaListas l [] = []
-unificaListas [] l = []
-unificaListas (x:xs) (y:ys) = (unifica x y) ++ (unificaListas xs ys)
+unificaListas [] [] = [epsilon] -- regresar la identidad
+unificaListas l [] = [] -- no c puede, regresamos el vacio
+unificaListas [] l = [] -- no c puede, regresamos el vacio
+unificaListas (x:xs) (y:ys) = -- cuando son dos listas
+   [composicion l2 l1 | l1 <- unifica x y, -- unificacion de las cabezas
+                        l2 <- unificaListas [aplicaT l1 x | x <- xs] [aplicaT l1 y | y <- ys]]
+-- la comp de dos listas  -- unificacion de las listas, dos aplicaciones de la lista anterior                
 
-
---unificaListas l [] = --regresa vacio, ¿cómo se representa el vacío?
---unificaListas [] l = --regresa vacio
-
-{-  si recibimos ambas listas podemos hacer una caza de patrones de ambas listas 
-si ambas son vacio entonces regresa la identidad
-si al menos una es vacia entonces no se puede crear un umg y regresamos el vacio 
-OJAZO: VACIO NO ES LA IDENTIDAD 
-
-El caso interesante es cuando no son vaacias, HINTAZO xd siempre regresamos una lista de sustituciones,
-las sustituciones son las listas
-
-Entonces hay que componer dos listas, la primera es la unificacion de las cabezas de los terminos,
-literalmente lo que recibimos son las listas, entonces vamos uno a uno unificando.
-La segunda parte de la composicion es una unificacion de listas ¿Cuales? pues dos aplicaciones de la
-lista anterior que creamos (La de la composicion) con la cabeza de cada una de las listas de las que 
-nos pasan, hay que tomar todos los temrinos de la lista y a cada uno aplicarles dicha lista
-
--}
 
 ---------------------------------------------------------------------------------
 --------                             EJEMPLOS                            --------
