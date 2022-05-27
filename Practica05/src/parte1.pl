@@ -36,3 +36,22 @@ fact(N,X) :- N>1, fact(N-1, XS), X is N*XS.
 suma(0,0).
 suma(1,1).
 suma(N,X) :- N>1, suma(N-1, XS), X is N+XS.
+
+
+% Ps lo binarios xd
+% Or
+or(0,0,0).
+or(1,0,1).
+or(0,1,1).
+or(1,1,1).
+
+% And
+and(0,0,0).
+and(1,0,0).
+and(0,1,0).
+amd(1,1,1).
+
+%Negacion
+not(1,0).
+not(0,1).
+
