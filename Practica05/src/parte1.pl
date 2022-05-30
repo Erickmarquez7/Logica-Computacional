@@ -1,3 +1,14 @@
+/*
+- Lógica Computacional 2022-2
+- Profesor: Francisco Hernández Quiroz
+- Ayudante: José Ricardo Desales Santos
+- Laboratorio: Emiliano Galeana Araujo
+- Integrantes:
+- Bernal Márquez Erick        317042522
+- Deloya Andrade Ana Valeria  317277582
+- Perez Romero Natalia Abigail 318144265
+*/
+
 /* 1. suseccion de tribonacci
 %definicion "Informal" de trib:
 %trib 0 = 0
