@@ -22,4 +22,4 @@ esta([_|XS],X):- esta(XS,X). %C concentra en la cola
 % 4, [5,6,7,8], = [5,6,7,8] false
 % 3, [1,5,9,0,3], = [1,5,9,0] true
 borrar(X, [X|XS], XS). %eliminamos, nos quedamos con la cola
-borrar(X, [L|LS], [M|MS]) :- not(X is M), borrar(X,LS,MS).
+borrar(X, [L|LS], [L|MS]) :- borrar(X,LS,MS). %caso recursivo sobre la cola de la lista

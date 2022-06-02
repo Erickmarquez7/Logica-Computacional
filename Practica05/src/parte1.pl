@@ -21,6 +21,7 @@ trib(1,0).
 trib(2,0).
 trib(3,1).
 trib(N,X) :- N > 3, N1 is N-1, trib(N1,X1), N2 is N-2, trib(N2,X2), N3 is N-3, trib(N3,X3), X is X1+X2+X3.	
+%al parecer es diferente poner N1 que N-1, no c pk
 
 
 %definicion de factorial
