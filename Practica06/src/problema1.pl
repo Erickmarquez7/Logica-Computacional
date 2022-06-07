@@ -70,9 +70,9 @@ path(Init,End,Visited, [Cambio | Path]) :-
 path3(Init,End,Visited, [Cambio | Path3]) :-
     cambio(Cambio, Init, Qn),
     \+ member(Qn, Visited),,
-    not (member(puerta(e,f)),Visited), %puerta f
-    not (member(puerta(e,d)),Visited), %puerta d 
-    not (member(puerta(d,c)),Visited), %puerta d
+    not (member(puerta(e,f)),Path3), %puerta f
+    not (member(puerta(e,d)),Path3), %puerta d 
+    not (member(puerta(d,c)),Path3), %puerta d
     path3(Qn,End,[Qn|Visited], Path3).
 %solo ponemos que no sean miembros f ni d
 
