@@ -67,5 +67,12 @@ path(Init,End,Visited, [Cambio | Path]) :-
 /*
 3. Modifica el programa para no pasar por lo cuartos f ni d
 */
-
+path3(Init,End,Visited, [Cambio | Path3]) :-
+    cambio(Cambio, Init, Qn),
+    \+ member(Qn, Visited),,
+    not (member(puerta(e,f)),Visited), %puerta f
+    not (member(puerta(e,d)),Visited), %puerta d 
+    not (member(puerta(d,c)),Visited), %puerta d
+    path3(Qn,End,[Qn|Visited], Path3).
+%solo ponemos que no sean miembros f ni d
 
