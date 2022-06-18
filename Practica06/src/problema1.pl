@@ -76,3 +76,4 @@ path3(Init,End,Visited, [Cambio | Path3]) :-
     path3(Qn,End,[Qn|Visited], Path3).
 %solo ponemos que no sean miembros f ni d
 
+%%%%%%f
