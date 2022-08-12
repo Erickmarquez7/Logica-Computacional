@@ -16,7 +16,9 @@ se nos hace complicado moldear ese nuevo pensamiento.
 
 Nota: 
 La linea 15
+
 > 15 {-# HLINT ignore "Use foldr" #-}
+
 Es solo para que el editor no te sugiera otras formar de escribir la función
 Ya que, aunque puede que se vea mejor, muchas veces es confuso y realmente no se entiende
 Así que solo es para quitar las suguerencia, pues es algo molesto que a cada rato te diga qué poner

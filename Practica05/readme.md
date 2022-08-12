@@ -11,11 +11,11 @@ Tenemos que guardar el resultado en la misma firma del enunciado. Y no es que se
 en otros lenguajes como Java lo hemos implementado, mas bien es que no estamos acostumbrados a poner
 el mismo resultado en la firma, sino que esperamos que ya nos lo dé.
 
-##### parte 1
+### parte 1
 Funciones para familiarizarnos con el lenguaje, tales como factorial, suma de una lista y circuitos lógicos
 
-##### parte 2
+### parte 2
 Recursividad con Prolog
 
-##### parte 3
+### parte 3
 Árboles binarios de busqueda

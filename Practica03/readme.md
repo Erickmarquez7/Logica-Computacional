@@ -8,8 +8,8 @@ ya sabiamos cómo hacerlo, pues las equivalencias logicas es algo que se ve dura
 La manera de trabajar fue similar a la anterior, en esta ocasion de juntaban al menos dos personas
 para poder discutir la implemtancion y avisabamos entre todos los cambios hechos
 
-##### Formas
+### Formas
 Implementación de las formas normales conjuntiva y disyuntiva de la lógica proposicional
 
-##### Funciones
+### Funciones
 Algunos ejericios para entender como se ejecutan las funciones anonimas
