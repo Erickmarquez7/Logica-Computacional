@@ -8,7 +8,6 @@
 - Deloya Andrade Ana Valeria  317277582
 - Perez Romero Natalia Abigail 318144265
 -}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Move guards forward" #-}
 
 data Color = Rojo | Amarillo | Verde | Azul deriving (Show,Eq)

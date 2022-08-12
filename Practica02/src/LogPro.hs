@@ -14,7 +14,6 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use foldr" #-}
 
-
 module LogProp where
 
 import Data.List

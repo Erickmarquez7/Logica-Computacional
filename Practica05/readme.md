@@ -1,9 +1,5 @@
-Integrantes:
-Bernal Márquez Erick         317042522
-Deloya Andrade Ana Valeria   317277582
-Perez Romero Natalia Abigail 318144265
+## Práctica 5
 
-Desarrollo:
 En esta ocasion no pudimos reunirnos todos a la vez ya que nuestro tiempos no coincidian, normal al ser fin de semestre.
 Sin embargo git fue una gran herramiento para que cada quien avanzara en alguna parte del codigo sin 
 necesidad de reunirnos al mismo tiempo.
@@ -14,3 +10,12 @@ por lo cual tenemos que ir acarreando el resultado si queremos por ejemplo, elim
 Tenemos que guardar el resultado en la misma firma del enunciado. Y no es que sea complicado pues al menos
 en otros lenguajes como Java lo hemos implementado, mas bien es que no estamos acostumbrados a poner
 el mismo resultado en la firma, sino que esperamos que ya nos lo dé.
+
+##### parte 1
+Funciones para familiarizarnos con el lenguaje, tales como factorial, suma de una lista y circuitos lógicos
+
+##### parte 2
+Recursividad con Prolog
+
+##### parte 3
+Árboles binarios de busqueda
