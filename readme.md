@@ -11,4 +11,4 @@ La materia se basa en, como su nombre lo dice, desarrollar una lógica computaci
 
 ### Participaciones
 1. [Acertijo de Einsten, el dueño del pez](Participaciones/Acertijo/Logica_acertijo_BME.pdf)
-2. Árbol geneaológico en Prolog
+2. [Árbol geneaológico en Prolog](Participaciones/arbolesProlog/)
